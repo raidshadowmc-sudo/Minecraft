@@ -1,0 +1,140 @@
+
+{% extends "base.html" %}
+
+{% block title %}Управление репутацией{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <div class="admin-header text-center py-4 mb-4">
+        <h1 class="display-4 fw-bold">
+            <i class="fas fa-star text-warning me-3"></i>Управление репутацией
+        </h1>
+        <p class="lead">Управление койнами и репутацией игроков</p>
+    </div>
+
+    <!-- Give Coins Section -->
+    <div class="card bg-dark mb-4">
+        <div class="card-header">
+            <h4><i class="fas fa-coins text-warning me-2"></i>Выдать койны</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin_give_coins') }}">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="player_id_coins" class="form-label">Игрок</label>
+                        <select name="player_id" id="player_id_coins" class="form-select bg-dark text-light" required>
+                            <option value="">Выберите игрока</option>
+                            {% for player in players %}
+                            <option value="{{ player.id }}">{{ player.nickname }} ({{ player.coins }} койнов)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="coins" class="form-label">Количество койнов</label>
+                        <input type="number" name="coins" id="coins" class="form-control bg-dark text-light" 
+                               min="1" max="10000" required>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-coins me-1"></i>Выдать койны
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Give Reputation Section -->
+    <div class="card bg-dark mb-4">
+        <div class="card-header">
+            <h4><i class="fas fa-star text-info me-2"></i>Выдать репутацию</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin_give_reputation') }}">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="player_id_rep" class="form-label">Игрок</label>
+                        <select name="player_id" id="player_id_rep" class="form-select bg-dark text-light" required>
+                            <option value="">Выберите игрока</option>
+                            {% for player in players %}
+                            <option value="{{ player.id }}">{{ player.nickname }} ({{ player.reputation }} репутации)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="reputation" class="form-label">Количество репутации</label>
+                        <input type="number" name="reputation" id="reputation" class="form-control bg-dark text-light" 
+                               min="-1000" max="1000" required>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-info">
+                            <i class="fas fa-star me-1"></i>Изменить репутацию
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Players Table -->
+    <div class="card bg-dark">
+        <div class="card-header">
+            <h4><i class="fas fa-users me-2"></i>Игроки по репутации</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ранг</th>
+                            <th>Игрок</th>
+                            <th>Репутация</th>
+                            <th>Койны</th>
+                            <th>Уровень</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in players %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ player.minecraft_skin_url }}" class="rounded me-2" 
+                                         width="32" height="32" alt="{{ player.nickname }}">
+                                    <div>
+                                        <div class="fw-bold">{{ player.nickname }}</div>
+                                        <small class="text-muted">{{ player.display_role }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info fs-6">{{ player.reputation }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark fs-6">{{ player.coins }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary fs-6">{{ player.level }}</span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('player_profile', player_id=player.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('admin') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Назад в админ-панель
+        </a>
+    </div>
+</div>
+{% endblock %}

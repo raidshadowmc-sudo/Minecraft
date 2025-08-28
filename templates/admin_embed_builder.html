@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+
+{% block title %}Конструктор Embed - Elite Squad{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <div class="admin-header text-center py-4 mb-5">
+        <h1 class="display-4 fw-bold admin-title mb-3">
+            <i class="fas fa-palette me-3"></i>Конструктор Embed
+        </h1>
+        <p class="lead">Создание красивых сообщений для Discord</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-magic me-2"></i>Создать Embed
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('send_embed') }}" id="embedForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Basic Fields -->
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">
+                                        <i class="fas fa-heading me-1"></i>Заголовок *
+                                    </label>
+                                    <input type="text" class="form-control" id="title" name="title" 
+                                           placeholder="Введите заголовок..." maxlength="256" required>
+                                    <div class="form-text">Максимум 256 символов</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">
+                                        <i class="fas fa-align-left me-1"></i>Описание *
+                                    </label>
+                                    <textarea class="form-control" id="description" name="description" 
+                                              rows="4" placeholder="Основной текст сообщения..." 
+                                              maxlength="4000" required></textarea>
+                                    <div class="form-text">Максимум 4000 символов</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="color" class="form-label">
+                                        <i class="fas fa-palette me-1"></i>Цвет
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="color" class="form-control form-control-color" 
+                                               id="color" name="color" value="#3498db" title="Выберите цвет">
+                                        <input type="text" class="form-control" id="colorHex" 
+                                               placeholder="#3498db" pattern="^#[0-9A-Fa-f]{6}$">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="footer_text_basic" class="form-label">
+                                        <i class="fas fa-quote-right me-1"></i>Подпись (необязательно)
+                                    </label>
+                                    <input type="text" class="form-control" id="footer_text_basic" name="footer" 
+                                           placeholder="Текст внизу сообщения..." maxlength="2048">
+                                </div>
+
+                                <!-- Fields Section -->
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <label class="form-label mb-0">
+                                            <i class="fas fa-list me-1"></i>Поля (Fields)
+                                        </label>
+                                        <button type="button" class="btn btn-sm btn-success" id="addField">
+                                            <i class="fas fa-plus me-1"></i>Добавить поле
+                                        </button>
+                                    </div>
+                                    <div id="fieldsContainer">
+                                        <!-- Fields will be added here dynamically -->
+                                    </div>
+                                </div>
+
+                                <!-- Images Section -->
+                                <div class="mb-4">
+                                    <h6 class="text-info mb-3">
+                                        <i class="fas fa-images me-2"></i>Изображения
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="image_url" class="form-label">Основное изображение</label>
+                                            <input type="url" class="form-control" id="image_url" name="image_url" 
+                                                   placeholder="https://example.com/image.png">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="thumbnail_url" class="form-label">Thumbnail URL</label>
+                                            <input type="url" class="form-control" id="thumbnail_url" name="thumbnail_url" 
+                                                   placeholder="https://example.com/thumbnail.png">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Footer Section -->
+                                <div class="mb-4">
+                                    <h6 class="text-info mb-3">
+                                        <i class="fas fa-quote-right me-2"></i>Подпись (Footer)
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="footer" class="form-label">Текст подписи</label>
+                                            <input type="text" class="form-control" id="footer" name="footer" 
+                                                   placeholder="Текст внизу сообщения..." maxlength="2048">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="footer_icon_url" class="form-label">Footer Icon URL</label>
+                                            <input type="url" class="form-control" id="footer_icon_url" name="footer_icon_url" 
+                                                   placeholder="https://example.com/icon.png">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="timestamp" name="timestamp">
+                                            <label class="form-check-label" for="timestamp">
+                                                Добавить временную метку
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="channel_id" class="form-label">
+                                        <i class="fab fa-discord me-1"></i>ID канала Discord *
+                                    </label>
+                                    <input type="text" class="form-control" id="channel_id" name="channel_id" 
+                                           placeholder="123456789012345678" pattern="[0-9]+" required>
+                                    <div class="form-text">18-значный ID канала Discord</div>
+                                </div>
+                            </div>
+
+                            <!-- Preview -->
+                            <div class="col-md-6">
+                                <div class="preview-section">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-eye me-2"></i>Предварительный просмотр
+                                    </h5>
+                                    <div class="embed-preview" id="embedPreview">
+                                        <div class="embed-container">
+                                            <div class="embed-content">
+                                                <div class="embed-header">
+                                                    <div class="embed-title" id="previewTitle">Заголовок embed</div>
+                                                </div>
+                                                <div class="embed-description" id="previewDescription">
+                                                    Описание embed сообщения
+                                                </div>
+                                                <div class="embed-fields" id="previewFields">
+                                                    <!-- Fields will appear here -->
+                                                </div>
+                                                <div class="embed-image" id="previewImage" style="display: none;">
+                                                    <img src="" alt="Изображение" class="img-fluid rounded">
+                                                </div>
+                                                <div class="embed-thumbnail" id="previewThumbnail" style="display: none;">
+                                                    <img src="" alt="Thumbnail" class="embed-thumb-img">
+                                                </div>
+                                                <div class="embed-footer" id="previewFooter" style="display: none;">
+                                                    <div class="footer-content">
+                                                        <img class="footer-icon" id="previewFooterIcon" src="" alt="Footer Icon" style="display: none;">
+                                                        <small class="text-muted" id="previewFooterText">Подпись</small>
+                                                        <small class="text-muted timestamp" id="previewTimestamp" style="display: none;"></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fab fa-discord me-2"></i>Отправить в Discord
+                            </button>
+                            <a href="{{ url_for('admin') }}" class="btn btn-secondary btn-lg ms-2">
+                                <i class="fas fa-arrow-left me-2"></i>Назад к админке
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.embed-preview {
+    background: #36393f;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.embed-container {
+    background: #2f3136;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    padding: 16px 20px;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+    line-height: 1.375;
+}
+
+.embed-description {
+    font-size: 14px;
+    color: #dcddde;
+    line-height: 1.375;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 12px;
+}
+
+.embed-image {
+    margin-top: 12px;
+}
+
+.embed-fields {
+    margin: 12px 0;
+}
+
+.embed-field {
+    margin-bottom: 8px;
+}
+
+.embed-field-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+    line-height: 1.375;
+}
+
+.embed-field-inline {
+    display: inline-block;
+    width: 30%;
+    margin-right: 3%;
+    vertical-align: top;
+}
+
+.embed-image img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+}
+
+.embed-thumbnail {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    max-width: 80px;
+    max-height: 80px;
+}
+
+.embed-thumb-img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.timestamp {
+    margin-left: auto;
+}
+
+.field-group {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.field-group.dark {
+    background: #2d3748;
+    border-color: #4a5568;
+}
+
+.form-control-color {
+    width: 60px;
+    padding: 0.375rem 0.75rem;
+}
+
+.preview-section {
+    position: sticky;
+    top: 20px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const titleInput = document.getElementById('title');
+    const descriptionInput = document.getElementById('description');
+    const colorInput = document.getElementById('color');
+    const colorHexInput = document.getElementById('colorHex');
+    const footerInput = document.getElementById('footer');
+    const imageUrlInput = document.getElementById('image_url');
+    const thumbnailUrlInput = document.getElementById('thumbnail_url');
+    const footerIconUrlInput = document.getElementById('footer_icon_url');
+    const timestampInput = document.getElementById('timestamp');
+    
+    const previewTitle = document.getElementById('previewTitle');
+    const previewDescription = document.getElementById('previewDescription');
+    const previewFooter = document.getElementById('previewFooter');
+    const previewImage = document.getElementById('previewImage');
+    const previewThumbnail = document.getElementById('previewThumbnail');
+    const previewFields = document.getElementById('previewFields');
+    const embedContainer = document.querySelector('.embed-container');
+    
+    let fieldCount = 0;
+    
+    function updatePreview() {
+        // Update title
+        previewTitle.textContent = titleInput.value || 'Заголовок embed';
+        
+        // Update description
+        previewDescription.textContent = descriptionInput.value || 'Описание embed сообщения';
+        
+        // Update color
+        const color = colorInput.value;
+        embedContainer.style.borderLeftColor = color;
+        colorHexInput.value = color;
+        
+        // Update footer
+        if (footerInput.value || timestampInput.checked) {
+            previewFooter.style.display = 'block';
+            document.getElementById('previewFooterText').textContent = footerInput.value;
+            
+            // Footer icon
+            if (footerIconUrlInput.value) {
+                document.getElementById('previewFooterIcon').src = footerIconUrlInput.value;
+                document.getElementById('previewFooterIcon').style.display = 'inline';
+            } else {
+                document.getElementById('previewFooterIcon').style.display = 'none';
+            }
+            
+            // Timestamp
+            if (timestampInput.checked) {
+                document.getElementById('previewTimestamp').textContent = new Date().toLocaleString();
+                document.getElementById('previewTimestamp').style.display = 'inline';
+            } else {
+                document.getElementById('previewTimestamp').style.display = 'none';
+            }
+        } else {
+            previewFooter.style.display = 'none';
+        }
+        
+        // Update image
+        if (imageUrlInput.value) {
+            previewImage.style.display = 'block';
+            previewImage.querySelector('img').src = imageUrlInput.value;
+        } else {
+            previewImage.style.display = 'none';
+        }
+        
+        // Update thumbnail
+        if (thumbnailUrlInput.value) {
+            previewThumbnail.style.display = 'block';
+            previewThumbnail.querySelector('img').src = thumbnailUrlInput.value;
+        } else {
+            previewThumbnail.style.display = 'none';
+        }
+    }
+    
+    // Color input sync
+    colorInput.addEventListener('input', function() {
+        colorHexInput.value = this.value;
+        updatePreview();
+    });
+    
+    colorHexInput.addEventListener('input', function() {
+        if (this.value.match(/^#[0-9A-Fa-f]{6}$/)) {
+            colorInput.value = this.value;
+            updatePreview();
+        }
+    });
+    
+    // Fields management
+    function addField() {
+        fieldCount++;
+        const fieldId = `field${fieldCount}`;
+        const fieldHtml = `
+            <div class="field-group" id="${fieldId}">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="mb-0">Поле #${fieldCount}</h6>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeField('${fieldId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Название поля</label>
+                        <input type="text" class="form-control field-name" name="field_names[]" 
+                               placeholder="Название..." maxlength="256">
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Значение поля</label>
+                        <textarea class="form-control field-value" name="field_values[]" rows="2" 
+                                  placeholder="Значение..." maxlength="1024"></textarea>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input field-inline" type="checkbox" name="field_inline[]" value="${fieldCount}">
+                    <label class="form-check-label">
+                        Отобразить в строку (inline)
+                    </label>
+                </div>
+            </div>
+        `;
+        document.getElementById('fieldsContainer').insertAdjacentHTML('beforeend', fieldHtml);
+        
+        // Add event listeners to new field inputs
+        const newFieldGroup = document.getElementById(fieldId);
+        newFieldGroup.querySelector('.field-name').addEventListener('input', updateFieldsPreview);
+        newFieldGroup.querySelector('.field-value').addEventListener('input', updateFieldsPreview);
+        newFieldGroup.querySelector('.field-inline').addEventListener('change', updateFieldsPreview);
+        
+        updateFieldsPreview();
+    }
+    
+    window.removeField = function(fieldId) {
+        document.getElementById(fieldId).remove();
+        updateFieldsPreview();
+    }
+    
+    function updateFieldsPreview() {
+        const fieldsContainer = previewFields;
+        fieldsContainer.innerHTML = '';
+        
+        const fieldGroups = document.querySelectorAll('#fieldsContainer .field-group');
+        fieldGroups.forEach(group => {
+            const nameInput = group.querySelector('.field-name');
+            const valueInput = group.querySelector('.field-value');
+            const inlineInput = group.querySelector('.field-inline');
+            
+            if (nameInput.value.trim() || valueInput.value.trim()) {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = inlineInput.checked ? 'embed-field embed-field-inline' : 'embed-field';
+                
+                if (nameInput.value.trim()) {
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'embed-field-name';
+                    nameDiv.textContent = nameInput.value;
+                    fieldDiv.appendChild(nameDiv);
+                }
+                
+                if (valueInput.value.trim()) {
+                    const valueDiv = document.createElement('div');
+                    valueDiv.className = 'embed-field-value';
+                    valueDiv.textContent = valueInput.value;
+                    fieldDiv.appendChild(valueDiv);
+                }
+                
+                fieldsContainer.appendChild(fieldDiv);
+            }
+        });
+    }
+    
+    // Add field button
+    document.getElementById('addField').addEventListener('click', addField);
+    
+    // Add event listeners
+    titleInput.addEventListener('input', updatePreview);
+    descriptionInput.addEventListener('input', updatePreview);
+    footerInput.addEventListener('input', updatePreview);
+    imageUrlInput.addEventListener('input', updatePreview);
+    thumbnailUrlInput.addEventListener('input', updatePreview);
+    footerIconUrlInput.addEventListener('input', updatePreview);
+    timestampInput.addEventListener('change', updatePreview);
+    
+    // Initial preview update
+    updatePreview();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Игрок не найден - Elite Squad{% endblock %}
+
+{% block extra_head %}
+<style>
+.not-found-page {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.not-found-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,193,7,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.not-found-container {
+    text-align: center;
+    max-width: 600px;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 20px;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.not-found-icon {
+    font-size: 6rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.not-found-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.not-found-subtitle {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.player-name-highlight {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.not-found-description {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.btn-glow {
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-glow:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    color: #000;
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    color: #fff;
+    border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    border-color: #ffd700;
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+    color: #fff;
+}
+
+.info-box {
+    background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.info-box h4 {
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.steps-list {
+    text-align: left;
+    margin: 1rem 0;
+}
+
+.steps-list li {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.steps-list li::before {
+    content: '✨';
+    position: absolute;
+    left: 0;
+    color: #ffd700;
+}
+
+@media (max-width: 768px) {
+    .not-found-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .not-found-title {
+        font-size: 2rem;
+    }
+    
+    .not-found-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-glow {
+        width: 200px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="not-found-page">
+    <div class="not-found-container">
+        <i class="fas fa-user-slash not-found-icon"></i>
+        
+        <h1 class="not-found-title">Игрок не найден</h1>
+        
+        <h2 class="not-found-subtitle">
+            Игрок <span class="player-name-highlight">{{ nickname }}</span> не зарегистрирован на сервере
+        </h2>
+        
+        <p class="not-found-description">
+            К сожалению, профиль этого игрока недоступен. Возможно, игрок ещё не заходил на сервер или указан неверный никнейм.
+        </p>
+
+        <div class="info-box">
+            <h4><i class="fas fa-info-circle"></i> Это ваш профиль?</h4>
+            <p>Если это ваш никнейм, вам нужно зарегистрироваться на сервере:</p>
+            <ol class="steps-list">
+                <li>Зайдите на сервер Elite Squad</li>
+                <li>Поиграйте несколько игр</li>
+                <li>Ваш профиль автоматически появится в системе</li>
+                <li>Вернитесь на сайт и настройте свой профиль</li>
+            </ol>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('index') }}" class="btn-glow btn-primary">
+                <i class="fas fa-home"></i> Главная страница
+            </a>
+            <a href="{{ url_for('login') }}" class="btn-glow btn-secondary">
+                <i class="fas fa-sign-in-alt"></i> Войти в аккаунт
+            </a>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                <i class="fas fa-lightbulb"></i>
+                Совет: Убедитесь, что никнейм написан правильно, учитывая регистр букв
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

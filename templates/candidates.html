@@ -1,0 +1,1166 @@
+
+{% extends "base.html" %}
+
+{% block title %}Кандидаты - Elite Squad{% endblock %}
+
+{% block extra_head %}
+<style>
+.candidates-container {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.candidates-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.candidates-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #28a745, #20c997, #17a2b8, #32cd32);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: candidatesTitleShift 4s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(40, 167, 69, 0.4);
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.candidates-title::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, rgba(40, 167, 69, 0.2), rgba(32, 201, 151, 0.2), rgba(23, 162, 184, 0.2));
+    border-radius: 20px;
+    filter: blur(20px);
+    z-index: -1;
+    animation: candidatesTitleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes candidatesTitleShift {
+    0%, 100% { 
+        background-position: 0% 50%;
+        filter: hue-rotate(0deg);
+    }
+    25% { 
+        background-position: 100% 0%;
+        filter: hue-rotate(15deg);
+    }
+    50% { 
+        background-position: 100% 100%;
+        filter: hue-rotate(30deg);
+    }
+    75% { 
+        background-position: 0% 100%;
+        filter: hue-rotate(15deg);
+    }
+}
+
+@keyframes candidatesTitleGlow {
+    from { 
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    to { 
+        opacity: 0.6;
+        transform: scale(1.05);
+    }
+}
+
+.candidates-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0;
+}
+
+.candidates-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto 2rem;
+    max-width: 1200px;
+    padding: 0 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.control-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-add-candidate {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.btn-add-candidate:hover {
+    background: linear-gradient(45deg, #218838, #1e7e34);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.6);
+}
+
+.filters-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.candidate-filter {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.candidate-filter:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.candidate-card {
+    background: linear-gradient(145deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.05));
+    border: 2px solid rgba(40, 167, 69, 0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.candidate-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #28a745, #20c997);
+    transition: all 0.3s ease;
+}
+
+.candidate-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(40, 167, 69, 0.8);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 
+                0 0 30px rgba(40, 167, 69, 0.4),
+                0 0 50px rgba(32, 201, 151, 0.2);
+    animation: candidateCardPulse 2s ease-in-out infinite;
+}
+
+@keyframes candidateCardPulse {
+    0%, 100% { 
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 
+                    0 0 30px rgba(40, 167, 69, 0.4),
+                    0 0 50px rgba(32, 201, 151, 0.2);
+    }
+    50% { 
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 
+                    0 0 40px rgba(40, 167, 69, 0.6),
+                    0 0 70px rgba(32, 201, 151, 0.4);
+    }
+}
+
+.candidate-card:hover::before {
+    width: 6px;
+}
+
+.candidate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.candidate-name {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.candidate-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.status-candidate {
+    background: rgba(108, 117, 125, 0.2);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.4);
+}
+
+.status-in_progress {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.status-invited {
+    background: rgba(0, 123, 255, 0.2);
+    color: #007bff;
+    border: 1px solid rgba(0, 123, 255, 0.4);
+}
+
+.status-accepted {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.4);
+}
+
+.status-rejected {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.4);
+}
+
+.candidate-description {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.candidate-servers {
+    margin-bottom: 1.5rem;
+}
+
+.servers-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.server-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.server-tag {
+    background: rgba(23, 162, 184, 0.2);
+    color: #17a2b8;
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(23, 162, 184, 0.4);
+    transition: all 0.3s ease;
+}
+
+.server-tag:hover {
+    background: rgba(23, 162, 184, 0.3);
+    transform: translateY(-2px);
+}
+
+.candidate-contact {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.contact-icon {
+    color: #17a2b8;
+    font-size: 1.2rem;
+}
+
+.contact-text {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
+.candidate-reactions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.reaction-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.reaction-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reaction-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.reaction-btn.liked {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.4);
+    color: #dc3545;
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 193, 7, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.rating-stars {
+    color: #ffc107;
+}
+
+.rating-value {
+    font-weight: 700;
+    color: #ffc107;
+}
+
+.candidate-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+}
+
+.btn-edit {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    color: #000;
+}
+
+.btn-edit:hover {
+    background: linear-gradient(45deg, #e0a800, #d39e00);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+}
+
+.btn-delete {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: #fff;
+}
+
+.btn-delete:hover {
+    background: linear-gradient(45deg, #c82333, #bd2130);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+.candidate-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.added-by {
+    font-weight: 600;
+}
+
+.date-added {
+    font-style: italic;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+    color: rgba(40, 167, 69, 0.3);
+}
+
+.empty-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.empty-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .candidates-title {
+        font-size: 2.5rem;
+    }
+    
+    .candidates-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 0.5rem;
+    }
+    
+    .candidate-card {
+        padding: 1.5rem;
+    }
+    
+    .candidates-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filters-group {
+        justify-content: center;
+    }
+}
+
+/* Animation for new candidates */
+@keyframes candidateSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.candidate-card.new {
+    animation: candidateSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Approved stamp effect */
+.approved-stamp {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background: linear-gradient(45deg, rgba(40, 167, 69, 0.9), rgba(32, 201, 151, 0.8));
+    border: 3px solid rgba(40, 167, 69, 1);
+    border-radius: 8px;
+    color: white;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    animation: stampPulse 2s ease-in-out infinite, stampRotate 0.8s ease-out;
+    transform-origin: center;
+    box-shadow: 
+        0 0 20px rgba(40, 167, 69, 0.6),
+        inset 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.approved-stamp::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, transparent, rgba(40, 167, 69, 0.3), transparent);
+    border-radius: 12px;
+    animation: stampGlow 3s ease-in-out infinite;
+    z-index: -1;
+}
+
+.approved-stamp .stamp-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(40, 167, 69, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: stampImpact 0.8s ease-out;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes stampPulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 20px rgba(40, 167, 69, 0.6),
+            inset 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+    50% { 
+        box-shadow: 
+            0 0 40px rgba(40, 167, 69, 0.9),
+            inset 0 0 30px rgba(255, 255, 255, 0.4);
+    }
+}
+
+@keyframes stampRotate {
+    0% { 
+        transform: rotate(-15deg) scale(0.8);
+        opacity: 0;
+    }
+    50% { 
+        transform: rotate(5deg) scale(1.1);
+    }
+    100% { 
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes stampGlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes stampImpact {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+.status-accepted .approved-stamp:hover {
+    animation-play-state: paused;
+    transform: scale(1.05);
+}
+
+/* Rejected stamp effect */
+.rejected-stamp {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background: linear-gradient(45deg, rgba(220, 53, 69, 0.9), rgba(169, 42, 56, 0.8));
+    border: 3px solid rgba(220, 53, 69, 1);
+    border-radius: 8px;
+    color: white;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    animation: rejectedPulse 2s ease-in-out infinite, rejectedRotate 0.8s ease-out;
+    transform-origin: center;
+    box-shadow: 
+        0 0 20px rgba(220, 53, 69, 0.6),
+        inset 0 0 20px rgba(255, 255, 255, 0.2);
+    filter: grayscale(0.3) brightness(0.8);
+}
+
+.rejected-stamp::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, transparent, rgba(220, 53, 69, 0.3), transparent);
+    border-radius: 12px;
+    animation: rejectedGlow 3s ease-in-out infinite;
+    z-index: -1;
+}
+
+.rejected-stamp .stamp-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(220, 53, 69, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: rejectedImpact 0.8s ease-out;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes rejectedPulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 20px rgba(220, 53, 69, 0.6),
+            inset 0 0 20px rgba(255, 255, 255, 0.2);
+        filter: grayscale(0.3) brightness(0.8);
+    }
+    50% { 
+        box-shadow: 
+            0 0 40px rgba(220, 53, 69, 0.9),
+            inset 0 0 30px rgba(255, 255, 255, 0.4);
+        filter: grayscale(0.1) brightness(0.9);
+    }
+}
+
+@keyframes rejectedRotate {
+    0% { 
+        transform: rotate(15deg) scale(0.8);
+        opacity: 0;
+    }
+    50% { 
+        transform: rotate(-5deg) scale(1.1);
+    }
+    100% { 
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes rejectedGlow {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes rejectedImpact {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+.status-rejected .rejected-stamp:hover {
+    animation-play-state: paused;
+    transform: scale(1.05);
+    filter: grayscale(0) brightness(1);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="candidates-container">
+    <div class="candidates-header">
+        <h1 class="candidates-title">КАНДИДАТЫ</h1>
+        <p class="candidates-subtitle">Elite Squad - Список потенциальных участников клана</p>
+    </div>
+
+    <div class="candidates-controls">
+        <div class="control-group">
+            <button class="btn btn-add-candidate" id="addCandidateBtn">
+                <i class="fas fa-plus me-2"></i>Добавить кандидата
+            </button>
+        </div>
+        <div class="filters-group">
+            <select class="form-select candidate-filter" id="statusFilter">
+                <option value="all" {% if status_filter == 'all' %}selected{% endif %}>Все статусы</option>
+                <option value="candidate" {% if status_filter == 'candidate' %}selected{% endif %}>Кандидат</option>
+                <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>В процессе</option>
+                <option value="invited" {% if status_filter == 'invited' %}selected{% endif %}>Приглашён</option>
+                <option value="accepted" {% if status_filter == 'accepted' %}selected{% endif %}>Принят</option>
+                <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Отклонён</option>
+            </select>
+            <input type="text" class="form-control candidate-filter" id="searchFilter" 
+                   placeholder="Поиск по нику..." value="{{ search_query }}">
+            <select class="form-select candidate-filter" id="sortFilter">
+                <option value="date_added" {% if sort_by == 'date_added' %}selected{% endif %}>По дате добавления</option>
+                <option value="nickname" {% if sort_by == 'nickname' %}selected{% endif %}>По нику</option>
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>По рейтингу</option>
+                <option value="likes" {% if sort_by == 'likes' %}selected{% endif %}>По лайкам</option>
+                <option value="status" {% if sort_by == 'status' %}selected{% endif %}>По статусу</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="candidates-grid" id="candidatesGrid">
+        {% if candidates %}
+            {% for candidate in candidates %}
+            <div class="candidate-card" data-candidate-id="{{ candidate.id }}">
+                <div class="candidate-header">
+                    <div>
+                        <div class="candidate-name">{{ candidate.nickname }}</div>
+                        <div class="candidate-status status-{{ candidate.status }}">
+                            {% if candidate.status == 'accepted' %}
+                                <div class="approved-stamp">
+                                    <i class="fas fa-stamp me-1"></i>
+                                    <span class="approved-text">APPROVED</span>
+                                    <div class="stamp-effect"></div>
+                                </div>
+                            {% elif candidate.status == 'rejected' %}
+                                <div class="rejected-stamp">
+                                    <i class="fas fa-times me-1"></i>
+                                    <span class="rejected-text">REJECTED</span>
+                                    <div class="stamp-effect"></div>
+                                </div>
+                            {% else %}
+                                <i class="fas fa-circle me-1"></i>
+                                {% if candidate.status == 'candidate' %}Кандидат
+                                {% elif candidate.status == 'in_progress' %}В процессе
+                                {% elif candidate.status == 'invited' %}Приглашён
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="candidate-description">
+                    {{ candidate.description }}
+                </div>
+
+                {% if candidate.get_servers_list() %}
+                <div class="candidate-servers">
+                    <div class="servers-label">
+                        <i class="fas fa-server me-1"></i>Серверы
+                    </div>
+                    <div class="server-tags">
+                        {% for server in candidate.get_servers_list() %}
+                        <span class="server-tag">{{ server }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if candidate.contact %}
+                <div class="candidate-contact">
+                    <i class="fas fa-comments contact-icon"></i>
+                    <span class="contact-text">{{ candidate.contact }}</span>
+                </div>
+                {% endif %}
+
+                <div class="candidate-reactions">
+                    <div class="reaction-group">
+                        <button class="reaction-btn" onclick="toggleLike({{ candidate.id }})">
+                            <i class="fas fa-heart"></i>
+                            <span class="like-count">{{ candidate.likes }}</span>
+                        </button>
+                    </div>
+                    
+                    {% if candidate.rating > 0 %}
+                    <div class="rating-display">
+                        <div class="rating-stars">
+                            {% for i in range(1, 6) %}
+                                {% if i <= candidate.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% elif i - 0.5 <= candidate.rating %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <span class="rating-value">{{ "%.1f"|format(candidate.rating) }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="candidate-actions">
+                    <button class="action-btn btn-edit" onclick="editCandidate({{ candidate.id }})">
+                        <i class="fas fa-edit me-1"></i>Изменить
+                    </button>
+                    <button class="action-btn btn-delete" onclick="deleteCandidate({{ candidate.id }})">
+                        <i class="fas fa-trash me-1"></i>Удалить
+                    </button>
+                </div>
+
+                <div class="candidate-meta">
+                    <span class="added-by">
+                        <i class="fas fa-user me-1"></i>{{ candidate.added_by or 'Неизвестно' }}
+                    </span>
+                    <span class="date-added">
+                        <i class="fas fa-calendar me-1"></i>{{ candidate.date_added.strftime('%d.%m.%Y') if candidate.date_added }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="empty-title">Список кандидатов пуст</div>
+            <div class="empty-description">Добавьте потенциальных участников клана</div>
+            <button class="btn btn-add-candidate" onclick="openAddModal()">
+                <i class="fas fa-plus me-2"></i>Добавить первого кандидата
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add/Edit Candidate Modal -->
+<div class="modal fade" id="candidateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.05)); border: 2px solid rgba(40, 167, 69, 0.3);">
+            <div class="modal-header">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-user-plus me-2"></i>
+                    <span id="modalTitle">Добавить кандидата</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="candidateForm">
+                    <input type="hidden" id="candidateId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="candidateNickname" class="form-label text-white">
+                                <i class="fas fa-user me-2"></i>Никнейм
+                            </label>
+                            <input type="text" class="form-control candidate-filter" id="candidateNickname" 
+                                   placeholder="Введите никнейм" maxlength="100" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="candidateStatus" class="form-label text-white">
+                                <i class="fas fa-flag me-2"></i>Статус
+                            </label>
+                            <select class="form-select candidate-filter" id="candidateStatus" required>
+                                <option value="candidate">Кандидат</option>
+                                <option value="in_progress">В процессе</option>
+                                <option value="invited">Приглашён</option>
+                                <option value="accepted">Принят</option>
+                                <option value="rejected">Отклонён</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="candidateDescription" class="form-label text-white">
+                            <i class="fas fa-scroll me-2"></i>Описание
+                        </label>
+                        <textarea class="form-control candidate-filter" id="candidateDescription" rows="4" 
+                                  placeholder="Качества, сильные стороны, навыки..." 
+                                  maxlength="500" required></textarea>
+                        <div class="form-text">
+                            <span id="descLength">0</span>/500
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="candidateServers" class="form-label text-white">
+                            <i class="fas fa-server me-2"></i>Серверы
+                        </label>
+                        <input type="text" class="form-control candidate-filter" id="candidateServers" 
+                               placeholder="hypixel.net, mc.minemen.club (через запятую)">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="candidateContact" class="form-label text-white">
+                            <i class="fas fa-comments me-2"></i>Контакт
+                        </label>
+                        <input type="text" class="form-control candidate-filter" id="candidateContact" 
+                               placeholder="Discord, Telegram или другой контакт" maxlength="200">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="candidateNotes" class="form-label text-white">
+                            <i class="fas fa-sticky-note me-2"></i>Заметки (приватные)
+                        </label>
+                        <textarea class="form-control candidate-filter" id="candidateNotes" rows="3" 
+                                  placeholder="Внутренние заметки..." maxlength="300"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" form="candidateForm" class="btn btn-add-candidate">
+                    <i class="fas fa-save me-2"></i>Сохранить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+class CandidatesManager {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.setupFilters();
+    }
+
+    setupEventListeners() {
+        // Add candidate button
+        document.getElementById('addCandidateBtn').addEventListener('click', () => {
+            this.openAddModal();
+        });
+
+        // Form submission
+        document.getElementById('candidateForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleFormSubmit();
+        });
+
+        // Character counter
+        document.getElementById('candidateDescription').addEventListener('input', (e) => {
+            document.getElementById('descLength').textContent = e.target.value.length;
+        });
+    }
+
+    setupFilters() {
+        const statusFilter = document.getElementById('statusFilter');
+        const searchFilter = document.getElementById('searchFilter');
+        const sortFilter = document.getElementById('sortFilter');
+
+        [statusFilter, searchFilter, sortFilter].forEach(filter => {
+            filter.addEventListener('change', () => this.applyFilters());
+        });
+
+        searchFilter.addEventListener('input', this.debounce(() => this.applyFilters(), 300));
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    applyFilters() {
+        const status = document.getElementById('statusFilter').value;
+        const search = document.getElementById('searchFilter').value;
+        const sort = document.getElementById('sortFilter').value;
+
+        const params = new URLSearchParams();
+        if (status !== 'all') params.append('status', status);
+        if (search) params.append('search', search);
+        if (sort !== 'date_added') params.append('sort', sort);
+
+        window.location.href = `/candidates?${params.toString()}`;
+    }
+
+    openAddModal() {
+        document.getElementById('modalTitle').textContent = 'Добавить кандидата';
+        document.getElementById('candidateForm').reset();
+        document.getElementById('candidateId').value = '';
+        document.getElementById('descLength').textContent = '0';
+        
+        const modal = new bootstrap.Modal(document.getElementById('candidateModal'));
+        modal.show();
+    }
+
+    openEditModal(candidateId, candidateData) {
+        document.getElementById('modalTitle').textContent = 'Редактировать кандидата';
+        document.getElementById('candidateId').value = candidateId;
+        document.getElementById('candidateNickname').value = candidateData.nickname;
+        document.getElementById('candidateStatus').value = candidateData.status;
+        document.getElementById('candidateDescription').value = candidateData.description;
+        document.getElementById('candidateServers').value = candidateData.servers ? candidateData.servers.join(', ') : '';
+        document.getElementById('candidateContact').value = candidateData.contact || '';
+        document.getElementById('candidateNotes').value = candidateData.notes || '';
+        document.getElementById('descLength').textContent = candidateData.description.length;
+        
+        const modal = new bootstrap.Modal(document.getElementById('candidateModal'));
+        modal.show();
+    }
+
+    async handleFormSubmit() {
+        const candidateId = document.getElementById('candidateId').value;
+        const isEdit = candidateId !== '';
+
+        const data = {
+            nickname: document.getElementById('candidateNickname').value.trim(),
+            status: document.getElementById('candidateStatus').value,
+            description: document.getElementById('candidateDescription').value.trim(),
+            servers: document.getElementById('candidateServers').value.split(',').map(s => s.trim()).filter(s => s),
+            contact: document.getElementById('candidateContact').value.trim(),
+            notes: document.getElementById('candidateNotes').value.trim()
+        };
+
+        if (!data.nickname || !data.description) {
+            showToast('Заполните обязательные поля!', 'error');
+            return;
+        }
+
+        try {
+            const url = isEdit ? `/api/candidates/${candidateId}` : '/api/candidates';
+            const method = isEdit ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast(result.message, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('candidateModal')).hide();
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast(result.error || 'Ошибка при сохранении', 'error');
+            }
+        } catch (error) {
+            console.error('Error submitting candidate:', error);
+            showToast('Произошла ошибка', 'error');
+        }
+    }
+}
+
+// Global functions for buttons
+async function toggleLike(candidateId) {
+    try {
+        const response = await fetch(`/api/candidates/${candidateId}/react`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type: 'like' })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            const likeBtn = document.querySelector(`[onclick="toggleLike(${candidateId})"]`);
+            const likeCount = likeBtn.querySelector('.like-count');
+            
+            likeCount.textContent = result.likes;
+            
+            if (result.action === 'added') {
+                likeBtn.classList.add('liked');
+                showToast('Лайк добавлен!', 'success');
+            } else {
+                likeBtn.classList.remove('liked');
+                showToast('Лайк убран!', 'info');
+            }
+        } else {
+            showToast(result.error || 'Ошибка при добавлении лайка', 'error');
+        }
+    } catch (error) {
+        console.error('Error toggling like:', error);
+        showToast('Произошла ошибка', 'error');
+    }
+}
+
+async function editCandidate(candidateId) {
+    try {
+        const response = await fetch(`/api/candidates?candidate_id=${candidateId}`);
+        const result = await response.json();
+        
+        if (result.success) {
+            const candidate = result.candidates.find(c => c.id === candidateId);
+            if (candidate) {
+                candidatesManager.openEditModal(candidateId, candidate);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading candidate for edit:', error);
+        showToast('Ошибка загрузки данных', 'error');
+    }
+}
+
+async function deleteCandidate(candidateId) {
+    if (!confirm('Удалить кандидата из списка?')) return;
+
+    try {
+        const response = await fetch(`/api/candidates/${candidateId}`, {
+            method: 'DELETE'
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showToast(result.message, 'success');
+            document.querySelector(`[data-candidate-id="${candidateId}"]`).remove();
+        } else {
+            showToast(result.error || 'Ошибка при удалении', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting candidate:', error);
+        showToast('Произошла ошибка', 'error');
+    }
+}
+
+function openAddModal() {
+    candidatesManager.openAddModal();
+}
+
+// Initialize
+let candidatesManager;
+document.addEventListener('DOMContentLoaded', function() {
+    candidatesManager = new CandidatesManager();
+});
+</script>
+{% endblock %}

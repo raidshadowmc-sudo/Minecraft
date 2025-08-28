@@ -1,0 +1,267 @@
+
+{% extends "base.html" %}
+
+{% block title %}ЧаВо по карме - Elite Squad{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <div class="display-1 mb-3">
+                    <i class="fas fa-yin-yang" style="color: #9b59b6;"></i>
+                </div>
+                <h1 class="display-4 fw-bold gradient-text">ЧаВо по карме</h1>
+                <p class="lead text-muted">Всё, что нужно знать о системе кармы Elite Squad</p>
+            </div>
+
+            <!-- FAQ Cards -->
+            <div class="row g-4">
+                <!-- What is Karma -->
+                <div class="col-12">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="fas fa-question-circle me-2"></i>Что такое карма?
+                            </h5>
+                            <p class="card-text">
+                                Карма — это показатель вашего поведения и вклада в сообщество. Она отражает, насколько вы полезны, активны и уважительны к другим игрокам.
+                                <br><br>
+                                Высокая карма открывает доступ к привилегиям: уникальные роли, особые цвета ника, VIP-каналы, бонусы к койнам и репутации.
+                                <br><br>
+                                Низкая карма означает, что вы нарушали правила или мешали другим. Она может привести к штрафам, метке «нарушитель», ограничению функций и чата.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to get karma -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">
+                                <i class="fas fa-plus-circle me-2"></i>Как повысить карму?
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-smile text-success me-2"></i>Будьте дружелюбны – общайтесь вежливо, избегайте токсичности</li>
+                                <li><i class="fas fa-hand-helping text-info me-2"></i>Помогайте новичкам – отвечайте на вопросы, показывайте механику игры</li>
+                                <li><i class="fas fa-shield-check text-primary me-2"></i>Играйте честно – не используйте читы, не абузьте баги</li>
+                                <li><i class="fas fa-gift text-success me-2"></i>Делитесь ресурсами – помогайте команде и клану</li>
+                                <li><i class="fas fa-tasks text-warning me-2"></i>Участвуйте в активности – клановые ивенты, челленджи, квесты</li>
+                                <li><i class="fas fa-exclamation-triangle text-danger me-2"></i>Сообщайте о нарушениях – помогайте модерации, репортите читеров</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to lose karma -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-danger">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">
+                                <i class="fas fa-minus-circle me-2"></i>Как потерять карму?
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-angry text-danger me-2"></i>Токсичное поведение – модераторы или бот фиксируют жалобы</li>
+                                <li><i class="fas fa-ban text-danger me-2"></i>Читерство – ручной минус или автоматическая интеграция с античитом</li>
+                                <li><i class="fas fa-crosshairs text-warning me-2"></i>Кемпинг новичков – если зафиксированы жалобы</li>
+                                <li><i class="fas fa-comment-slash text-danger me-2"></i>Оскорбления игроков – система предупреждений и штрафов</li>
+                                <li><i class="fas fa-exclamation-triangle text-warning me-2"></i>Нарушение правил – любое предупреждение или мут</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Karma levels -->
+                <div class="col-12">
+                    <div class="card border-info">
+                        <div class="card-body">
+                            <h5 class="card-title text-info">
+                                <i class="fas fa-layer-group me-2"></i>Уровни кармы
+                            </h5>
+                            <div class="row text-center">
+                                <div class="col-md-2">
+                                    <div class="p-3 rounded" style="background: linear-gradient(45deg, #1a1a1a, #000000);">
+                                        <h6 class="text-danger">🌑 Поглощённый Тьмой</h6>
+                                        <small class="text-danger">≤ -1000</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="p-3 rounded" style="background: linear-gradient(45deg, #6c757d, #495057);">
+                                        <h6 class="text-warning">⚠️ Тёмный Пилигрим</h6>
+                                        <small class="text-warning">-1000 до -500</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="p-3 rounded" style="background: linear-gradient(45deg, #adb5bd, #6c757d);">
+                                        <h6 class="text-muted">⚖️ Серый Балансир</h6>
+                                        <small class="text-muted">-499 до 499</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="p-3 rounded" style="background: linear-gradient(45deg, #17a2b8, #138496);">
+                                        <h6 class="text-white">💎 Светоносец</h6>
+                                        <small class="text-white">500 до 999</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="p-3 rounded" style="background: linear-gradient(45deg, #28a745, #20c997);">
+                                        <h6 class="text-white">👑 Избранный</h6>
+                                        <small class="text-white">1000 до 2499</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="p-3 rounded" style="background: linear-gradient(45deg, #ffc107, #fd7e14);">
+                                        <h6 class="text-primary">🏆 Апофеоз</h6>
+                                        <small class="text-primary">2500+</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Karma benefits -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-warning">
+                        <div class="card-body">
+                            <h5 class="card-title text-warning">
+                                <i class="fas fa-trophy me-2"></i>Преимущества высокой кармы
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-crown text-warning me-2"></i>Уникальные уровни кармы</li>
+                                <li><i class="fas fa-palette text-info me-2"></i>Особые цвета и градиенты ника</li>
+                                <li><i class="fas fa-coins text-success me-2"></i>Бонус к наградам за квесты (+10-50%)</li>
+                                <li><i class="fas fa-star text-warning me-2"></i>VIP-каналы в Discord</li>
+                                <li><i class="fas fa-shield text-primary me-2"></i>Приоритет в очередях</li>
+                                <li><i class="fas fa-trophy text-warning me-2"></i>Эксклюзивные ивенты</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Karma penalties -->
+                <div class="col-md-6">
+                    <div class="card h-100 border-secondary">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Последствия низкой кармы
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-comment-slash text-danger me-2"></i>Ограничения чата и функций</li>
+                                <li><i class="fas fa-tag text-warning me-2"></i>Метка "нарушитель" в игре и Discord</li>
+                                <li><i class="fas fa-coins text-secondary me-2"></i>Штрафы к койнам и опыту</li>
+                                <li><i class="fas fa-clock text-danger me-2"></i>Временные ограничения и баны</li>
+                                <li><i class="fas fa-eye text-warning me-2"></i>Усиленный контроль модерации</li>
+                                <li><i class="fas fa-exclamation text-danger me-2"></i>Блокировка доступа к премиум-функциям</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quest karma rewards -->
+                <div class="col-12">
+                    <div class="card border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="fas fa-tasks me-2"></i>Карма за квесты
+                            </h5>
+                            <p class="card-text">Все квесты теперь дают карму в качестве награды:</p>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <i class="fas fa-calendar-day text-info fa-2x"></i>
+                                        <h6 class="mt-2">Ежедневные</h6>
+                                        <span class="badge bg-info">+5 кармы</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <i class="fas fa-calendar-week text-success fa-2x"></i>
+                                        <h6 class="mt-2">Еженедельные</h6>
+                                        <span class="badge bg-success">+15 кармы</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <i class="fas fa-calendar text-warning fa-2x"></i>
+                                        <h6 class="mt-2">Ежемесячные</h6>
+                                        <span class="badge bg-warning">+30 кармы</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <i class="fas fa-star text-primary fa-2x"></i>
+                                        <h6 class="mt-2">Постоянные</h6>
+                                        <span class="badge bg-primary">+2 кармы</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="text-center p-3 bg-light rounded">
+                                        <i class="fas fa-gift text-danger fa-2x"></i>
+                                        <h6 class="mt-2">Сезонные</h6>
+                                        <span class="badge bg-danger">+100 кармы</span>
+                                        <small class="d-block text-muted">Особые ивенты</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Совет:</strong> Выполняйте квесты регулярно для стабильного роста кармы!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="col-12 mt-4">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">
+                                <i class="fas fa-lightbulb me-2"></i>Советы по повышению кармы
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Будьте вежливы с другими игроками</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Помогайте новичкам изучать игру</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Играйте честно без читов</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check text-success me-2"></i>Участвуйте в общественных мероприятиях</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Сообщайте о нарушителях</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Делитесь ресурсами с командой</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="text-center mt-5">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Назад к таблице лидеров
+                </a>
+                <a href="{{ url_for('experience_guide') }}" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-star me-2"></i>ЧаВо по опыту
+                </a>
+                <a href="{{ url_for('coins_guide') }}" class="btn btn-outline-warning ms-2">
+                    <i class="fas fa-coins me-2"></i>ЧаВо по койнам
+                </a>
+                <a href="{{ url_for('reputation_guide') }}" class="btn btn-outline-danger ms-2">
+                    <i class="fas fa-heart me-2"></i>ЧаВо по репутации
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

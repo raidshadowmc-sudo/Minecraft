@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% block title %}Авторизация - Elite Squad{% endblock %}
+
+{% block extra_head %}
+<style>
+.login-page {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,193,7,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.login-container {
+    max-width: 450px;
+    width: 100%;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    border-radius: 25px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: loginCardAnimation 1s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 193, 7, 0.05), transparent);
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes loginCardAnimation {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.login-icon {
+    font-size: 4rem;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iconGlow 2s ease-in-out infinite alternate;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+@keyframes iconGlow {
+    from {
+        background-position: 0% 50%;
+        transform: scale(1);
+    }
+    to {
+        background-position: 100% 50%;
+        transform: scale(1.05);
+    }
+}
+
+.login-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    animation: titlePulse 3s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.login-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.form-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group-text {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: #ffd700;
+    border-radius: 15px 0 0 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 15px 20px;
+    font-size: 1rem;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.toggle-password {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 0 15px 15px 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    border: none;
+    border-radius: 15px;
+    color: #000;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+    margin-top: 1rem;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+    background: linear-gradient(45deg, #ffaa00, #ffd700);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.back-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    color: #ffd700;
+    text-decoration: none;
+    transform: translateX(-3px);
+}
+
+.security-info {
+    background: linear-gradient(45deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.security-info h6 {
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.security-info p {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Loading animation */
+.login-btn.loading {
+    pointer-events: none;
+}
+
+.login-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .login-title {
+        font-size: 1.8rem;
+    }
+    
+    .login-icon {
+        font-size: 3rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-shield-alt login-icon"></i>
+            <h1 class="login-title">Elite Squad</h1>
+            <p class="login-subtitle">Авторизация администратора</p>
+        </div>
+        
+        <form method="POST" class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="fas fa-key me-2"></i>Пароль администратора
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" class="form-control" id="password" name="password" 
+                           required placeholder="Введите пароль администратора" autocomplete="current-password">
+                    <button type="button" class="btn toggle-password" onclick="togglePassword()" id="toggleBtn">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-btn" id="submitBtn">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                <span id="btnText">Войти в систему</span>
+            </button>
+        </form>
+        
+        <div class="security-info">
+            <h6><i class="fas fa-info-circle me-2"></i>Безопасность</h6>
+            <p>Доступ предоставляется только авторизованным администраторам. Все действия записываются в журнал.</p>
+        </div>
+        
+        <div class="login-footer">
+            <a href="{{ url_for('index') }}" class="back-link">
+                <i class="fas fa-arrow-left me-2"></i>Вернуться к лидерборду
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// Enhanced form handling
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const passwordField = document.getElementById('password');
+
+    // Auto-focus password field
+    passwordField.focus();
+
+    // Form submission with loading state
+    form.addEventListener('submit', function(e) {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        btnText.textContent = 'Авторизация...';
+    });
+
+    // Enhanced input effects
+    passwordField.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'scale(1.02)';
+    });
+
+    passwordField.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'scale(1)';
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.location.href = "{{ url_for('index') }}";
+        }
+    });
+
+    // Password strength indicator
+    passwordField.addEventListener('input', function() {
+        const strength = this.value.length;
+        const inputGroup = this.parentElement;
+        
+        if (strength > 0) {
+            inputGroup.style.borderColor = strength >= 6 ? '#28a745' : '#ffc107';
+        } else {
+            inputGroup.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        }
+    });
+
+    // Animated background effects
+    const container = document.querySelector('.login-container');
+    let mouseX = 0, mouseY = 0;
+
+    container.addEventListener('mousemove', function(e) {
+        const rect = container.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) / rect.width * 100;
+        mouseY = (e.clientY - rect.top) / rect.height * 100;
+        
+        container.style.background = `
+            radial-gradient(circle at ${mouseX}% ${mouseY}%, 
+            rgba(255, 193, 7, 0.1) 0%, 
+            rgba(255, 255, 255, 0.15) 30%, 
+            rgba(255, 255, 255, 0.05) 100%)
+        `;
+    });
+
+    container.addEventListener('mouseleave', function() {
+        container.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05))';
+    });
+
+    // Particle effect on login success
+    function createParticles() {
+        const colors = ['#ffd700', '#ffaa00', '#ff6b35'];
+        
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: 6px;
+                height: 6px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                left: ${window.innerWidth / 2}px;
+                top: ${window.innerHeight / 2}px;
+                animation: particle-explosion 1s ease-out forwards;
+            `;
+            
+            particle.style.animationDelay = i * 0.05 + 's';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 1000);
+        }
+    }
+
+    // Add particle animation CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes particle-explosion {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(${Math.random() * 400 - 200}px, ${Math.random() * 400 - 200}px) scale(0);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+{% endblock %}

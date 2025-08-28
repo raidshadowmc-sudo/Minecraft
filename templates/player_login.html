@@ -1,0 +1,1190 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в Elite Squad{% endblock %}
+
+{% block content %}
+<div class="player-login-container">
+    <!-- Animated Background -->
+    <div class="login-background-dynamic">
+        <div class="floating-elements">
+            <i class="element element-sword fas fa-swords"></i>
+            <i class="element element-shield fas fa-shield-alt"></i>
+            <i class="element element-crown fas fa-chess-king"></i>
+            <i class="element element-gem fas fa-gem"></i>
+            <i class="element element-star fas fa-star"></i>
+            <i class="element element-rocket fas fa-rocket"></i>
+        </div>
+        <div class="cyber-grid"></div>
+        <div class="particle-system">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </div>
+
+    <div class="login-content-wrapper">
+        <div class="container-fluid h-100">
+            <div class="row h-100 align-items-center justify-content-center">
+                <div class="col-xl-4 col-lg-5 col-md-6 col-sm-8">
+                    <!-- Elite Login Card -->
+                    <div class="elite-login-card">
+                        <!-- Elite Header -->
+                        <div class="elite-header">
+                            <div class="header-background"></div>
+                            <div class="logo-system">
+                                <div class="logo-rings">
+                                    <div class="ring ring-1"></div>
+                                    <div class="ring ring-2"></div>
+                                    <div class="ring ring-3"></div>
+                                </div>
+                                <div class="logo-core">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <div class="title-system">
+                                <h1 class="main-title">
+                                    <span class="title-elite">Elite</span>
+                                    <span class="title-squad">Squad</span>
+                                </h1>
+                                <p class="sub-title">Терминал доступа</p>
+                                <div class="access-level">
+                                    <div class="level-indicator"></div>
+                                    <span class="level-text">Пользователь</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Elite Form -->
+                        <form method="POST" class="elite-form">
+                            <div class="form-section">
+                                <h2 class="section-header">
+                                    <i class="fas fa-user-lock"></i>
+                                    Аутентификация
+                                </h2>
+                                <div class="elite-field">
+                                    <label for="nickname" class="field-label">
+                                        <i class="fas fa-id-card"></i>
+                                        Идентификатор
+                                    </label>
+                                    <div class="field-container">
+                                        <input type="text"
+                                               class="elite-input"
+                                               id="nickname"
+                                               name="nickname"
+                                               required
+                                               placeholder="Введите ваш ID или ник"
+                                               autocomplete="username">
+                                        <div class="input-scanner"></div>
+                                        <div class="field-status">
+                                            <i class="fas fa-check status-valid"></i>
+                                            <i class="fas fa-times status-invalid"></i>
+                                        </div>
+                                    </div>
+                                    <small class="field-hint">
+                                        <i class="fas fa-info-circle"></i>
+                                        Ваш ID - это ваш уникальный идентификатор в системе
+                                    </small>
+                                </div>
+
+                                <div class="elite-field">
+                                    <label for="password" class="field-label">
+                                        <i class="fas fa-key"></i>
+                                        Ключ доступа
+                                    </label>
+                                    <div class="field-container">
+                                        <input type="password"
+                                               class="elite-input"
+                                               id="password"
+                                               name="password"
+                                               required
+                                               placeholder="Введите ваш ключ">
+                                        <div class="input-scanner"></div>
+                                        <button type="button" class="password-reveal" onclick="toggleElitePassword()">
+                                            <i class="fas fa-eye" id="elite-password-eye"></i>
+                                        </button>
+                                        <div class="field-status">
+                                            <i class="fas fa-check status-valid"></i>
+                                            <i class="fas fa-times status-invalid"></i>
+                                        </div>
+                                    </div>
+                                    <small class="field-hint">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Ключ доступа используется для подтверждения личности
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Access Button -->
+                            <div class="access-section">
+                                <button type="submit" class="elite-access-btn">
+                                    <div class="btn-background"></div>
+                                    <div class="btn-scanner"></div>
+                                    <span class="btn-content">
+                                        <i class="fas fa-terminal"></i>
+                                        <span class="btn-text">Авторизоваться</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Features Matrix -->
+                        <div class="features-matrix">
+                            <h3 class="matrix-header">
+                                <i class="fas fa-gamepad"></i>
+                                Игровые возможности
+                            </h3>
+                            <div class="features-grid-elite">
+                                <div class="feature-module">
+                                    <div class="module-icon">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    <div class="module-info">
+                                        <h4>Квесты и Задания</h4>
+                                        <p>Выполняйте задания и получайте награды</p>
+                                    </div>
+                                    <div class="module-status"></div>
+                                </div>
+                                <div class="feature-module">
+                                    <div class="module-icon">
+                                        <i class="fas fa-trophy"></i>
+                                    </div>
+                                    <div class="module-info">
+                                        <h4>Достижения</h4>
+                                        <p>Получайте уникальные достижения за игру</p>
+                                    </div>
+                                    <div class="module-status"></div>
+                                </div>
+                                <div class="feature-module">
+                                    <div class="module-icon">
+                                        <i class="fas fa-user-cog"></i>
+                                    </div>
+                                    <div class="module-info">
+                                        <h4>Персонализация</h4>
+                                        <p>Настройте профиль под себя</p>
+                                    </div>
+                                    <div class="module-status"></div>
+                                </div>
+                                <div class="feature-module">
+                                    <div class="module-icon">
+                                        <i class="fas fa-store"></i>
+                                    </div>
+                                    <div class="module-info">
+                                        <h4>Магазин</h4>
+                                        <p>Покупайте улучшения и косметику</p>
+                                    </div>
+                                    <div class="module-status"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Elite Footer -->
+                        <div class="elite-footer">
+                            <a href="{{ url_for('index') }}" class="back-system">
+                                <i class="fas fa-arrow-left"></i>
+                                Вернуться к основной сети
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Elite Player Login Styles */
+.player-login-container {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(255, 193, 7, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 123, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, #0a0a0f 0%, #141420 25%, #1a1a2e 50%, #0f0f23 75%, #050508 100%);
+}
+
+.login-background-dynamic {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.floating-elements {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.element {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.1;
+    animation: elementFloat 12s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.element-sword { top: 10%; left: 5%; animation-delay: 0s; color: #ff6b35; }
+.element-shield { top: 70%; left: 10%; animation-delay: 2s; color: #007bff; }
+.element-crown { top: 20%; right: 15%; animation-delay: 4s; color: #ffd700; }
+.element-gem { top: 80%; right: 20%; animation-delay: 6s; color: #9c27b0; }
+.element-star { top: 50%; left: 80%; animation-delay: 8s; color: #ffc107; }
+.element-rocket { top: 30%; left: 50%; animation-delay: 10s; color: #28a745; }
+
+@keyframes elementFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
+    25% { transform: translateY(-20px) rotate(90deg); opacity: 0.3; }
+    50% { transform: translateY(-10px) rotate(180deg); opacity: 0.2; }
+    75% { transform: translateY(-30px) rotate(270deg); opacity: 0.4; }
+}
+
+.cyber-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(255, 193, 7, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 193, 7, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+.particle-system {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: radial-gradient(circle, rgba(255, 193, 7, 0.8), transparent);
+    border-radius: 50%;
+    animation: particleDrift 15s linear infinite;
+}
+
+.particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { top: 60%; left: 80%; animation-delay: 3s; }
+.particle:nth-child(3) { top: 80%; left: 20%; animation-delay: 6s; }
+.particle:nth-child(4) { top: 40%; left: 60%; animation-delay: 9s; }
+.particle:nth-child(5) { top: 10%; left: 90%; animation-delay: 12s; }
+
+@keyframes particleDrift {
+    0% { transform: translateY(0px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+.login-content-wrapper {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.elite-login-card {
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)),
+        linear-gradient(45deg, rgba(255, 193, 7, 0.05), rgba(0, 123, 255, 0.05));
+    backdrop-filter: blur(25px);
+    border-radius: 30px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+    overflow: hidden;
+    animation: eliteCardEntrance 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.elite-login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg,
+        rgba(255, 193, 7, 0.1) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(0, 123, 255, 0.1) 100%);
+    border-radius: 30px;
+    z-index: -1;
+}
+
+.elite-login-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+        rgba(255, 193, 7, 0.6),
+        rgba(0, 123, 255, 0.4),
+        rgba(138, 43, 226, 0.6),
+        rgba(255, 193, 7, 0.6));
+    background-size: 400% 400%;
+    border-radius: 32px;
+    z-index: -2;
+    animation: borderGlow 4s ease-in-out infinite;
+}
+
+@keyframes eliteCardEntrance {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9) rotateY(15deg);
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateY(0deg);
+        filter: blur(0px);
+    }
+}
+
+@keyframes borderGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.elite-header {
+    position: relative;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    background:
+        linear-gradient(135deg,
+            rgba(255, 193, 7, 0.15) 0%,
+            rgba(0, 123, 255, 0.1) 50%,
+            rgba(138, 43, 226, 0.15) 100%);
+    border-radius: 30px 30px 0 0;
+    overflow: hidden;
+    border-bottom: 2px solid rgba(255, 193, 7, 0.3);
+}
+
+.header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="circuit" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M0 10h20M10 0v20" stroke="rgba(255,193,7,0.1)" stroke-width="0.5"/><circle cx="10" cy="10" r="2" fill="rgba(255,193,7,0.2)"/></pattern></defs><rect width="100" height="100" fill="url(%23circuit)"/></svg>');
+    opacity: 0.3;
+    animation: circuitPulse 3s ease-in-out infinite;
+}
+
+@keyframes circuitPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+}
+
+.logo-system {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+.logo-rings {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+}
+
+.ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 2px solid rgba(255, 193, 7, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ringRotate 4s linear infinite;
+}
+
+.ring-1 {
+    width: 100px;
+    height: 100px;
+    border-color: rgba(255, 193, 7, 0.8);
+    animation-duration: 4s;
+}
+
+.ring-2 {
+    width: 70px;
+    height: 70px;
+    border-color: rgba(0, 123, 255, 0.6);
+    animation-duration: 3s;
+    animation-direction: reverse;
+}
+
+.ring-3 {
+    width: 40px;
+    height: 40px;
+    border-color: rgba(138, 43, 226, 0.7);
+    animation-duration: 2s;
+}
+
+@keyframes ringRotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.logo-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(45deg, #ffd700, #ffc107);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #000;
+    box-shadow:
+        0 0 20px rgba(255, 193, 7, 0.8),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    animation: coreGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes coreGlow {
+    from {
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(255, 193, 7, 1), inset 0 2px 4px rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+.title-system {
+    position: relative;
+    z-index: 2;
+}
+
+.main-title {
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.title-elite {
+    font-size: 2.8rem;
+    background: linear-gradient(45deg, #ffd700, #ffed4a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    display: block;
+    letter-spacing: 3px;
+}
+
+.title-squad {
+    font-size: 2.2rem;
+    background: linear-gradient(45deg, #007bff, #48dbfb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+    display: block;
+    letter-spacing: 2px;
+}
+
+.sub-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    font-family: 'Courier New', monospace;
+}
+
+.access-level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 20px;
+    display: inline-flex;
+}
+
+.level-indicator {
+    width: 8px;
+    height: 8px;
+    background: #ffc107;
+    border-radius: 50%;
+    animation: indicatorPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes indicatorPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.level-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffc107;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.elite-form {
+    padding: 2rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1rem 0;
+    border-bottom: 2px solid rgba(255, 193, 7, 0.2);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+
+.elite-field {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.field-label i {
+    color: #ffc107;
+    width: 16px;
+}
+
+.field-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.elite-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Courier New', monospace;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+}
+
+.elite-input:focus {
+    outline: none;
+    border-color: #ffc107;
+    background:
+        linear-gradient(145deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    box-shadow:
+        0 0 20px rgba(255, 215, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.elite-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-style: italic;
+}
+
+.input-scanner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 193, 7, 0.3) 50%,
+        transparent 100%);
+    border-radius: 15px;
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.elite-input:focus + .input-scanner {
+    animation: scannerSweep 1s ease-in-out;
+}
+
+@keyframes scannerSweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.password-reveal {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    color: #ffc107;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+}
+
+.password-reveal:hover {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.field-status {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+}
+
+.status-valid,
+.status-invalid {
+    font-size: 1.1rem;
+    display: none;
+}
+
+.status-valid {
+    color: #28a745;
+}
+
+.status-invalid {
+    color: #dc3545;
+}
+
+.field-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    font-family: 'Courier New', monospace;
+}
+
+.field-hint i {
+    color: rgba(255, 193, 7, 0.6);
+}
+
+.access-section {
+    margin: 2rem 0;
+}
+
+.elite-access-btn {
+    width: 100%;
+    padding: 1.5rem;
+    background: transparent;
+    border: 2px solid rgba(255, 193, 7, 0.6);
+    border-radius: 20px;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-family: 'Orbitron', monospace;
+}
+
+.btn-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+        rgba(255, 193, 7, 0.1),
+        rgba(0, 123, 255, 0.1));
+    transition: all 0.4s ease;
+    z-index: 1;
+}
+
+.btn-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-content i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-scanner {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%);
+    transition: left 0.6s ease;
+    z-index: 2;
+}
+
+.elite-access-btn:hover {
+    border-color: #ffc107;
+    transform: translateY(-3px);
+    box-shadow:
+        0 15px 30px rgba(255, 193, 7, 0.4),
+        0 0 50px rgba(255, 193, 7, 0.2);
+}
+
+.elite-access-btn:hover .btn-background {
+    background: linear-gradient(135deg,
+        rgba(255, 193, 7, 0.3),
+        rgba(0, 123, 255, 0.2));
+}
+
+.elite-access-btn:hover .btn-content i {
+    transform: scale(1.2) rotateY(180deg);
+    color: #ffc107;
+}
+
+.elite-access-btn:hover .btn-scanner {
+    left: 100%;
+}
+
+.elite-access-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.features-matrix {
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 20px 20px;
+    border-top: 2px solid rgba(255, 193, 7, 0.2);
+}
+
+.matrix-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    color: #ffc107;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.features-grid-elite {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.feature-module {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1rem;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.feature-module:hover {
+    background: rgba(255, 193, 7, 0.05);
+    border-color: rgba(255, 193, 7, 0.3);
+    transform: translateY(-2px);
+}
+
+.module-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, #ffc107, #ff8c00);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #000;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.feature-module:hover .module-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+}
+
+.module-info h4 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.module-info p {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.module-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #28a745;
+    animation: statusBlink 2s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.elite-footer {
+    padding: 1.5rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-system {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.back-system:hover {
+    color: #ffc107;
+    border-color: rgba(255, 193, 7, 0.3);
+    transform: translateX(-3px);
+    text-decoration: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .elite-login-card {
+        margin: 1rem;
+        border-radius: 25px;
+    }
+
+    .elite-header {
+        padding: 2rem 1.5rem;
+    }
+
+    .title-elite {
+        font-size: 2.2rem;
+    }
+
+    .title-squad {
+        font-size: 1.8rem;
+    }
+
+    .logo-rings {
+        width: 80px;
+        height: 80px;
+    }
+
+    .ring-1 {
+        width: 80px;
+        height: 80px;
+    }
+
+    .ring-2 {
+        width: 60px;
+        height: 60px;
+    }
+
+    .ring-3 {
+        width: 35px;
+        height: 35px;
+    }
+
+    .logo-core {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .features-grid-elite {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .feature-module {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .elite-form,
+    .features-matrix {
+        padding: 1.5rem;
+    }
+
+    .elite-input {
+        padding: 0.875rem 1rem;
+    }
+
+    .elite-access-btn {
+        padding: 1.25rem;
+        font-size: 1rem;
+    }
+
+    .element {
+        font-size: 1.5rem;
+    }
+}
+
+/* Enhanced input validation states */
+.elite-input.valid {
+    border-color: #28a745;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
+}
+
+.elite-input.invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
+}
+
+.elite-input.valid + .input-scanner + .password-reveal + .field-status .status-valid {
+    display: block;
+}
+
+.elite-input.invalid + .input-scanner + .password-reveal + .field-status .status-invalid {
+    display: block;
+}
+
+/* Animations */
+@keyframes moduleSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+</style>
+
+<script>
+// Elite System Initialization
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Elite Squad Player Terminal - Initializing...');
+
+    // Auto-focus nickname field with delay for better UX
+    setTimeout(() => {
+        document.getElementById('nickname').focus();
+    }, 500);
+
+    // Initialize feature modules with staggered animation
+    const modules = document.querySelectorAll('.feature-module');
+    modules.forEach((module, index) => {
+        module.style.animationDelay = `${index * 0.15}s`;
+        module.style.animation = 'moduleSlideIn 0.8s ease forwards';
+    });
+
+    // Initialize form validation
+    initializeEliteValidation();
+
+    // Add elite form interactions
+    initializeEliteInteractions();
+
+    console.log('✅ Elite Terminal Ready');
+});
+
+// Elite password toggle with enhanced effects
+function toggleElitePassword() {
+    const passwordField = document.getElementById('password');
+    const passwordEye = document.getElementById('elite-password-eye');
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        passwordEye.classList.remove('fa-eye');
+        passwordEye.classList.add('fa-eye-slash');
+        passwordEye.style.color = '#28a745';
+    } else {
+        passwordField.type = 'password';
+        passwordEye.classList.remove('fa-eye-slash');
+        passwordEye.classList.add('fa-eye');
+        passwordEye.style.color = '#ffc107';
+    }
+}
+
+// Elite form validation system
+function initializeEliteValidation() {
+    const nicknameField = document.getElementById('nickname');
+    const passwordField = document.getElementById('password');
+
+    if (nicknameField) {
+        nicknameField.addEventListener('input', function() {
+            validateNickname(this);
+        });
+
+        nicknameField.addEventListener('blur', function() {
+            validateNickname(this);
+        });
+    }
+
+    if (passwordField) {
+        passwordField.addEventListener('input', function() {
+            validatePassword(this);
+        });
+    }
+}
+
+function validateNickname(field) {
+    const value = field.value.trim();
+    const isValid = value.length >= 3 && value.length <= 16 && /^[a-zA-Z0-9_]+$/.test(value);
+
+    if (isValid) {
+        field.classList.add('valid');
+        field.classList.remove('invalid');
+    } else {
+        field.classList.add('invalid');
+        field.classList.remove('valid');
+    }
+}
+
+function validatePassword(field) {
+    const value = field.value;
+    const isValid = value.length >= 6;
+
+    if (isValid) {
+        field.classList.add('valid');
+        field.classList.remove('invalid');
+    } else {
+        field.classList.add('invalid');
+        field.classList.remove('valid');
+    }
+}
+
+// Elite interactive effects
+function initializeEliteInteractions() {
+    const form = document.querySelector('.elite-form');
+    const accessBtn = document.querySelector('.elite-access-btn');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (accessBtn) {
+                accessBtn.style.transform = 'translateY(-1px) scale(0.95)';
+                accessBtn.style.opacity = '0.8';
+
+                setTimeout(() => {
+                    accessBtn.style.transform = '';
+                    accessBtn.style.opacity = '';
+                }, 200);
+            }
+        });
+    }
+
+    // Add hover effects to modules
+    const modules = document.querySelectorAll('.feature-module');
+    modules.forEach(module => {
+        module.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.02)';
+        });
+
+        module.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(-2px) scale(1)';
+        });
+    });
+}
+
+// Add module slide-in animation
+const moduleStyles = `
+    @keyframes moduleSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+`;
+
+// Inject module animation styles
+const moduleStyleSheet = document.createElement('style');
+moduleStyleSheet.textContent = moduleStyles;
+document.head.appendChild(moduleStyleSheet);
+</script>
+{% endblock %}

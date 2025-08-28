@@ -1,0 +1,2906 @@
+{% extends "base.html" %}
+
+{% block title %}🎮 Elite Squad - сайт клана.{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Modern Leaderboard Styles */
+.leaderboard-page {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+    min-height: 100vh;
+    padding: 1rem 0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.leaderboard-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,193,7,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* Header Section */
+.leaderboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.leaderboard-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+}
+
+.elite-squad-enhanced {
+    position: relative;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.elite-squad-enhanced::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.4), rgba(255, 170, 0, 0.2), rgba(255, 107, 53, 0.3));
+    border-radius: 12px;
+    z-index: -1;
+    filter: blur(20px);
+    animation: eliteGlow 3s ease-in-out infinite alternate;
+}
+
+.elite-squad-enhanced::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+    border-radius: 8px;
+    z-index: -1;
+    filter: blur(10px);
+    animation: shimmer 2s linear infinite;
+}
+
+@keyframes eliteGlow {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1.03);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.leaderboard-title::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), rgba(255, 170, 0, 0.2), rgba(255, 107, 53, 0.2));
+    border-radius: 10px;
+    z-index: -1;
+    filter: blur(10px);
+}
+
+.beta-badge {
+    font-size: 0.6rem;
+    background: linear-gradient(45deg, #ff6b35, #ffc107);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 900;
+    margin-left: 10px;
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { 
+        box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
+        transform: scale(1.05);
+    }
+}
+
+.leaderboard-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0;
+}
+
+/* Controls Panel */
+.controls-panel {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.search-section {
+    flex: 1;
+    min-width: 280px;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    color: rgba(255, 193, 7, 0.7);
+    font-size: 1.1rem;
+    z-index: 2;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+    transform: translateY(-2px);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.filter-section {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.modern-select {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    min-width: 120px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.modern-select option {
+    background: #1a1a2e;
+    color: white;
+}
+
+/* Gamemode Navigation */
+.gamemode-nav {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.gamemode-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 12px 20px;
+    border-radius: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    font-size: 0.9rem;
+}
+
+.gamemode-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.gamemode-btn:hover {
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3);
+}
+
+.gamemode-btn:hover::before {
+    left: 100%;
+}
+
+.gamemode-btn.active {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    border-color: #ffd700;
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Leaderboard Container */
+.leaderboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Player Cards */
+.player-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.player-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    transition: all 0.3s ease;
+}
+
+.player-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: rgba(255, 193, 7, 0.5);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 193, 7, 0.2);
+}
+
+.player-card:hover::before {
+    width: 6px;
+    background: linear-gradient(to bottom, #ffd700, #ffaa00);
+}
+
+/* Top 3 Special Styling */
+.player-card.rank-1 {
+    border-color: rgba(255, 215, 0, 0.6);
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.player-card.rank-1::before {
+    background: linear-gradient(to bottom, #ffd700, #ffaa00);
+    width: 6px;
+}
+
+.player-card.rank-2 {
+    border-color: rgba(192, 192, 192, 0.6);
+    background: linear-gradient(135deg, rgba(192,192,192,0.15), rgba(192,192,192,0.05));
+    box-shadow: 0 0 25px rgba(192, 192, 192, 0.2);
+}
+
+.player-card.rank-2::before {
+    background: linear-gradient(to bottom, #c0c0c0, #a0a0a0);
+    width: 6px;
+}
+
+.player-card.rank-3 {
+    border-color: rgba(205, 127, 50, 0.6);
+    background: linear-gradient(135deg, rgba(205,127,50,0.15), rgba(205,127,50,0.05));
+    box-shadow: 0 0 25px rgba(205, 127, 50, 0.2);
+}
+
+.player-card.rank-3::before {
+    background: linear-gradient(to bottom, #cd7f32, #b8722d);
+    width: 6px;
+}
+
+/* Player Card Content */
+.player-content {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto auto;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.rank-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.rank-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 50px;
+}
+
+.rank-badge.gold {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    border-color: #ffd700;
+    color: #000;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.rank-badge.silver {
+    background: linear-gradient(45deg, #c0c0c0, #a0a0a0);
+    border-color: #c0c0c0;
+    color: #000;
+    box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
+}
+
+.rank-badge.bronze {
+    background: linear-gradient(45deg, #cd7f32, #b8722d);
+    border-color: #cd7f32;
+    color: #000;
+    box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+}
+
+.rank-icon {
+    font-size: 1.2rem;
+    margin-bottom: 2px;
+}
+
+.rank-number {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.player-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.player-avatar-container {
+    position: relative;
+}
+
+.player-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    image-rendering: pixelated;
+    border: 3px solid rgba(255, 193, 7, 0.3);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.player-card:hover .player-avatar {
+    border-color: rgba(255, 193, 7, 0.8);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.player-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.player-name:hover {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Player Badges */
+.player-badges-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: 0.5rem;
+}
+
+.badge-mini {
+    width: 25px;
+    height: 25px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.badge-mini:hover {
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.badge-count {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.emoji-tiny {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
+
+/* Animated Badges */
+.badge-animated {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.level-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+
+.level-badge {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: 2px solid rgba(0, 123, 255, 0.5);
+    border-radius: 15px;
+    padding: 8px 12px;
+    text-align: center;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.level-number {
+    font-size: 1.1rem;
+    display: block;
+}
+
+.level-label {
+    font-size: 0.7rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stats-section {
+    display: flex;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    min-width: 60px;
+}
+
+.stat-item:hover {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: rgba(255, 193, 7, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+.winrate-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+}
+
+.winrate-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.winrate-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.winrate-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.winrate-progress {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s ease;
+}
+
+.kd-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+
+.kd-display {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.kd-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.kd-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+/* Win Rate Colors */
+.winrate-high, .kd-positive {
+    color: #28a745 !important;
+}
+
+.winrate-high .winrate-progress {
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.winrate-medium {
+    color: #ffc107 !important;
+}
+
+.winrate-medium .winrate-progress {
+    background: linear-gradient(90deg, #ffc107, #ffed4e);
+}
+
+.winrate-low, .kd-negative {
+    color: #dc3545 !important;
+}
+
+.winrate-low .winrate-progress {
+    background: linear-gradient(90deg, #dc3545, #e74c3c);
+}
+
+.kd-positive {
+    color: #28a745 !important;
+}
+
+.kd-negative {
+    color: #dc3545 !important;
+}
+
+/* Loading State */
+.loading-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 215, 0, 0.3);
+    border-left: 4px solid #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 2rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: rgba(255, 193, 7, 0.3);
+    margin-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .player-content {
+        grid-template-columns: auto 1fr auto;
+        gap: 1rem;
+    }
+
+    .stats-section {
+        grid-column: 1 / -1;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .winrate-section,
+    .kd-section {
+        grid-column: 1 / -1;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .leaderboard-title {
+        font-size: 2.5rem;
+    }
+
+    .controls-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .filter-section {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .gamemode-nav {
+        gap: 0.25rem;
+    }
+
+    .gamemode-btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    .player-content {
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+    }
+
+    .player-section {
+        min-width: unset;
+    }
+
+    .stats-section {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .stat-item {
+        min-width: 50px;
+    }
+}
+
+/* Animation for new items */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.player-card {
+    animation: slideInUp 0.5s ease-out forwards;
+}
+
+.player-card:nth-child(1) { animation-delay: 0.1s; }
+.player-card:nth-child(2) { animation-delay: 0.2s; }
+.player-card:nth-child(3) { animation-delay: 0.3s; }
+.player-card:nth-child(4) { animation-delay: 0.4s; }
+.player-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Custom Modal Styles */
+.modal-content {
+    background: linear-gradient(135deg, #0a0a0a 0%, #16162f 50%, #0a0a0a 100%) !important;
+    border: 2px solid rgba(255, 193, 7, 0.4) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 193, 7, 0.3) !important;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem !important;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 170, 0, 0.1)) !important;
+    border-bottom: 1px solid rgba(255, 193, 7, 0.3) !important;
+    border-radius: 0 !important;
+}
+
+.player-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.player-avatar-section {
+    position: relative;
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-glow-ring {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(circle, rgba(255,215,0,0.5) 0%, rgba(255,215,0,0) 70%);
+    border-radius: 20px;
+    z-index: 0;
+}
+
+.enhanced-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 18px;
+    image-rendering: pixelated;
+    border: 5px solid #ffd700;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.enhanced-avatar:hover {
+    transform: scale(1.05);
+}
+
+.modal-player-info {
+    flex: 1;
+}
+
+.modal-player-name {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-player-level {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    margin-bottom: 0.5rem;
+}
+
+.level-badge-modal {
+    font-size: 1rem;
+}
+
+.player-role {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.btn-close-modal {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-close-modal:hover {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+.modal-body-enhanced {
+    padding: 2rem !important;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+}
+
+.stats-grid-modal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card-modal {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+}
+
+.stat-card-modal:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 193, 7, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 193, 7, 0.2);
+}
+
+.stat-value-modal {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label-modal {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.performance-section-modal {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.performance-title-modal {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.performance-grid-modal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+}
+
+.performance-item-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.performance-value-modal {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.3rem;
+}
+
+.performance-label-modal {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-modal-primary {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    border: none;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-modal-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.btn-modal-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-modal-secondary:hover {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffd700;
+    transform: translateY(-2px);
+}
+
+/* Maintenance Modal Styles */
+.maintenance-gear {
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.maintenance-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#animated-dots {
+    display: inline-block;
+    min-width: 20px;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+    }
+
+    .stats-grid-modal {
+        grid-template-columns: 1fr;
+    }
+
+    .player-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .enhanced-avatar {
+        width: 70px;
+        height: 70px;
+    }
+
+    .modal-player-name {
+        font-size: 1.5rem;
+    }
+
+    .modal-body-enhanced {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Enhanced Modal Elements - Roles, Titles, Badges */
+.player-role-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.player-role {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.player-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 3px 6px;
+    border-radius: 6px;
+    background: rgba(147, 51, 234, 0.15);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.player-badges-section {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.badges-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.badge-item-modal {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 80px;
+    cursor: pointer;
+}
+
+.badge-item-modal:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 193, 7, 0.4);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.badge-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.badge-item-modal small {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.more-badges {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 170, 0, 0.1));
+    border-color: rgba(255, 193, 7, 0.4);
+    color: #ffd700;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+}
+
+/* Gradient Text Animation */
+.gradient-text {
+    animation: gradient-animation 3s ease-in-out infinite;
+}
+
+@keyframes gradient-animation {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Mobile optimizations for badges */
+@media (max-width: 768px) {
+    .badges-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+    
+    .badge-item-modal {
+        padding: 0.8rem;
+        min-height: 70px;
+    }
+    
+    .badge-emoji {
+        font-size: 1.2rem;
+    }
+    
+    .player-role-container {
+        align-items: center;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchGamemode(gamemode, displayName) {
+    // Update the gamemode title
+    const gamemodeNameElement = document.getElementById('gamemode-name');
+    if (gamemodeNameElement) {
+        gamemodeNameElement.textContent = displayName;
+    }
+
+    // Update active button
+    document.querySelectorAll('.gamemode-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-gamemode="${gamemode}"]`).classList.add('active');
+
+    // Load leaderboard data for the selected gamemode
+    loadGamemodeLeaderboard(gamemode);
+}
+
+function loadGamemodeLeaderboard(gamemode) {
+    const leaderboardContent = document.getElementById('leaderboardContent');
+    if (!leaderboardContent) return;
+
+    // Show loading state
+    leaderboardContent.innerHTML = `
+        <div class="text-center p-5">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+            <p class="mt-3 text-muted">Загрузка лидерборда ${gamemode}...</p>
+        </div>
+    `;
+
+    // Fetch gamemode leaderboard data
+    fetch(`/api/gamemode-leaderboard?gamemode=${gamemode}&limit=50`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderLeaderboard(data.leaderboard, gamemode);
+            } else {
+                leaderboardContent.innerHTML = `
+                    <div class="text-center p-5">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Ошибка загрузки лидерборда: ${data.error || 'Неизвестная ошибка'}
+                        </div>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading leaderboard:', error);
+            leaderboardContent.innerHTML = `
+                <div class="text-center p-5">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle me-2"></i>
+                        Ошибка соединения с сервером
+                    </div>
+                </div>
+            `;
+        });
+}
+
+function renderLeaderboard(players, gamemode) {
+    const leaderboardContent = document.getElementById('leaderboardContent');
+    if (!players || players.length === 0) {
+        leaderboardContent.innerHTML = `
+            <div class="text-center p-5">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Нет данных для режима ${gamemode}
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+    players.forEach((player, index) => {
+        const rank = index + 1;
+        let rankClass = '';
+        let rankIcon = 'fas fa-hashtag';
+
+        if (rank === 1) {
+            rankClass = 'rank-1';
+            rankIcon = 'fas fa-crown';
+        } else if (rank === 2) {
+            rankClass = 'rank-2';
+            rankIcon = 'fas fa-medal';
+        } else if (rank === 3) {
+            rankClass = 'rank-3';
+            rankIcon = 'fas fa-award';
+        }
+
+        html += `
+            <div class="player-card ${rankClass}">
+                <div class="player-content">
+                    <div class="rank-section">
+                        <div class="rank-badge ${rankClass === '' ? '' : rankClass.replace('rank-', '')}">
+                            <i class="${rankIcon} rank-icon"></i>
+                            <span class="rank-number">${rank}</span>
+                        </div>
+                    </div>
+                    <div class="player-section">
+                        <div class="player-avatar-container" onclick="showPlayerDetails(${player.id})">
+                            <img src="${player.skin_url || 'https://mc-heads.net/avatar/steve/50'}" 
+                                 alt="${player.nickname}" class="player-avatar" style="cursor: pointer;">
+                        </div>
+                        <div class="player-info">
+                            <a href="/public_profile/${player.id}" class="player-name ${player.nickname_gradient ? 'gradient-text gradient-animated' : ''}" 
+                               ${player.nickname_gradient ? 'style="' + player.nickname_gradient + '"' : ''}>${player.nickname}</a>
+                            <div class="player-badges-inline"></div>
+                        </div>
+                    </div>
+                    <div class="level-section">
+                        <div class="level-badge">
+                            <span class="level-number">${player.level || 1}</span>
+                            <span class="level-label">Уровень</span>
+                        </div>
+                    </div>
+                    <div class="stats-section">
+                        ${getStatsByGamemode(player, gamemode, player.stats_gradient)}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    leaderboardContent.innerHTML = html;
+}
+
+function getStatsByGamemode(player, gamemode, statsGradient = null) {
+    const gradientStyle = statsGradient ? `style="${statsGradient}" class="gradient-text gradient-animated"` : '';
+    const gradientClass = statsGradient ? 'gradient-text gradient-animated' : '';
+    switch(gamemode) {
+        case 'bedwars':
+            return `
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.kills || 0}</span>
+                    <span class="stat-label">Убийства</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.final_kills || 0}</span>
+                    <span class="stat-label">Финалы</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.beds_broken || 0}</span>
+                    <span class="stat-label">Кровати</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.wins || 0}</span>
+                    <span class="stat-label">Победы</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.kd_ratio || '0.00'}</span>
+                    <span class="stat-label">K/D</span>
+                </div>
+            `;
+        case 'kitpvp':
+            return `
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.kills || 0}</span>
+                    <span class="stat-label">Убийства</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.deaths || 0}</span>
+                    <span class="stat-label">Смерти</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.kd_ratio || '0.00'}</span>
+                    <span class="stat-label">K/D</span>
+                </div>
+            `;
+        default:
+            return `
+                <div class="stat-item">
+                    <span class="stat-value ${gradientClass}" ${gradientStyle}>${player.wins || 0}</span>
+                    <span class="stat-label">Победы</span>
+                </div>
+            `;
+    }
+}
+
+// Player details modal functionality (make it globally accessible)
+window.showPlayerDetails = async function(playerId) {
+    try {
+        // Get current gamemode from the leaderboard instance
+        const currentGamemode = window.leaderboard ? window.leaderboard.currentGamemode : 'bedwars';
+
+        // Show maintenance message if not bedwars
+        if (currentGamemode !== 'bedwars') {
+            console.log(`Режим ${currentGamemode.toUpperCase()} временно недоступен`);
+            return;
+        }
+
+        const response = await fetch(`/api/player/${playerId}/details`);
+        const data = await response.json();
+
+        if (data.success && data.player) {
+            const player = data.player;
+            displayPlayerModal(player, currentGamemode);
+        } else {
+            console.error('Failed to load player details:', data.error);
+            console.error('Не удалось загрузить данные игрока');
+        }
+    } catch (error) {
+        console.error('Error fetching player details:', error);
+        console.error('Ошибка подключения к серверу');
+    }
+}
+
+function displayPlayerModal(player, gamemode = 'bedwars') {
+    // Helper function to get gradient styling
+    const getGradientStyle = (gradient) => {
+        if (!gradient) return '';
+        return `style="background: ${gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" class="gradient-text gradient-animated"`;
+    };
+
+    // Format player name with gradient
+    const playerNameHtml = player.nickname_gradient 
+        ? `<h3 class="modal-player-name gradient-text gradient-animated" style="background: ${player.nickname_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">${player.nickname}</h3>`
+        : `<h3 class="modal-player-name">${player.nickname}</h3>`;
+
+    // Format role with gradient and proper role hierarchy
+    const roleHtml = (() => {
+        const roleName = player.display_role || player.role || 'Игрок';
+        if (player.role_gradient) {
+            return `<span class="player-role gradient-text gradient-animated" style="background: ${player.role_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><i class="fas fa-crown me-1"></i>${roleName}</span>`;
+        } else {
+            return `<span class="player-role"><i class="fas fa-crown me-1"></i>${roleName}</span>`;
+        }
+    })();
+
+    // Format title with gradient
+    const titleHtml = player.active_custom_title 
+        ? (player.title_gradient 
+            ? `<span class="player-title gradient-text gradient-animated" style="background: ${player.title_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><i class="fas fa-medal me-1"></i>${player.active_custom_title}</span>`
+            : `<span class="player-title"><i class="fas fa-medal me-1"></i>${player.active_custom_title}</span>`)
+        : '';
+
+    // Format badges
+    const badgesHtml = player.visible_badges && player.visible_badges.length > 0 
+        ? `<div class="player-badges-section">
+             <h6 class="badges-title"><i class="fas fa-trophy me-2"></i>Бейджи</h6>
+             <div class="badges-grid">
+               ${player.visible_badges.slice(0, 6).map(badge => 
+                 `<div class="badge-item-modal" title="${badge.description || badge.display_name}">
+                    <span class="badge-emoji">${badge.emoji || '🏆'}</span>
+                    <small>${badge.display_name}</small>
+                  </div>`
+               ).join('')}
+               ${player.visible_badges.length > 6 ? `<div class="badge-item-modal more-badges">+${player.visible_badges.length - 6}</div>` : ''}
+             </div>
+           </div>`
+        : '';
+
+    const modalHTML = `
+        <div class="modal fade player-stats-modal" id="playerDetailsModal" tabindex="-1" aria-labelledby="playerDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content modern-modal">
+                    <div class="modal-header enhanced-header">
+                        <div class="player-header-content">
+                            <div class="player-avatar-section">
+                                <div class="avatar-container" id="modal-avatar-container">
+                                    <div class="avatar-glow-ring"></div>
+                                    <img id="modal-player-avatar" class="enhanced-avatar" 
+                                         src="${player.skin_url || 'https://mc-heads.net/avatar/steve/90'}" 
+                                         alt="Player Avatar">
+                                </div>
+                            </div>
+                            <div class="modal-player-info">
+                                ${playerNameHtml}
+                                <div class="modal-player-level" id="modal-player-level">
+                                    <i class="fas fa-star"></i>
+                                    <span class="level-badge-modal">Level ${player.level || 1}</span>
+                                </div>
+                                <div class="player-role-container">
+                                    ${roleHtml}
+                                    ${titleHtml}
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body modal-body-enhanced">
+                        ${badgesHtml}
+                        
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <span class="stat-value-modal ${player.stats_gradient ? 'gradient-text gradient-animated' : ''}" 
+                                      ${player.stats_gradient ? `style="background: ${player.stats_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"` : ''}
+                                      id="modal-kills">${(player.kills || 0).toLocaleString()}</span>
+                                <span class="stat-label-modal">
+                                    <i class="fas fa-sword"></i> Kills
+                                </span>
+                            </div>
+                            <div class="stat-card-modal">
+                                <span class="stat-value-modal ${player.stats_gradient ? 'gradient-text gradient-animated' : ''}" 
+                                      ${player.stats_gradient ? `style="background: ${player.stats_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"` : ''}
+                                      id="modal-deaths">${(player.deaths || 0).toLocaleString()}</span>
+                                <span class="stat-label-modal">
+                                    <i class="fas fa-skull"></i> Deaths
+                                </span>
+                            </div>
+                            <div class="stat-card-modal">
+                                <span class="stat-value-modal ${player.stats_gradient ? 'gradient-text gradient-animated' : ''}" 
+                                      ${player.stats_gradient ? `style="background: ${player.stats_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"` : ''}
+                                      id="modal-final-kills">${(player.final_kills || 0).toLocaleString()}</span>
+                                <span class="stat-label-modal">
+                                    <i class="fas fa-crosshairs"></i> Final Kills
+                                </span>
+                            </div>
+                            <div class="stat-card-modal">
+                                <span class="stat-value-modal ${player.stats_gradient ? 'gradient-text gradient-animated' : ''}" 
+                                      ${player.stats_gradient ? `style="background: ${player.stats_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"` : ''}
+                                      id="modal-beds">${(player.beds_broken || 0).toLocaleString()}</span>
+                                <span class="stat-label-modal">
+                                    <i class="fas fa-bed"></i> Beds Broken
+                                </span>
+                            </div>
+                            <div class="stat-card-modal">
+                                <span class="stat-value-modal ${player.stats_gradient ? 'gradient-text gradient-animated' : ''}" 
+                                      ${player.stats_gradient ? `style="background: ${player.stats_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"` : ''}
+                                      id="modal-kd">${(player.kd_ratio || '0.00')}</span>
+                                <span class="stat-label-modal">
+                                    <i class="fas fa-chart-line"></i> K/D Ratio
+                                </span>
+                            </div>
+                            <div class="stat-card-modal">
+                                <span class="stat-value-modal ${player.stats_gradient ? 'gradient-text gradient-animated' : ''}" 
+                                      ${player.stats_gradient ? `style="background: ${player.stats_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"` : ''}
+                                      id="modal-experience">${(player.experience || 0).toLocaleString()}</span>
+                                <span class="stat-label-modal">
+                                    <i class="fas fa-star"></i> Experience
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="performance-section-modal">
+                            <div class="performance-title-modal">
+                                <i class="fas fa-trophy"></i>
+                                <span>Game Performance</span>
+                            </div>
+                            <div class="performance-grid-modal">
+                                <div class="performance-item-modal">
+                                    <span class="performance-value-modal" id="modal-games">${(player.games_played || 0).toLocaleString()}</span>
+                                    <div class="performance-label-modal">Games Played</div>
+                                </div>
+                                <div class="performance-item-modal">
+                                    <span class="performance-value-modal" id="modal-wins">${(player.wins || 0).toLocaleString()}</span>
+                                    <div class="performance-label-modal">Wins</div>
+                                </div>
+                                <div class="performance-item-modal">
+                                    <span class="performance-value-modal" id="modal-winrate">${(player.win_rate || 0).toFixed(1)}%</span>
+                                    <div class="performance-label-modal">Win Rate</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <a href="/public_profile/${player.id}" class="btn btn-modal-primary">
+                                <i class="fas fa-user me-2"></i>View Profile
+                            </a>
+                            <button type="button" class="btn btn-modal-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Remove existing modal if present
+    const existingModal = document.getElementById('playerDetailsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('playerDetailsModal'));
+    modal.show();
+
+    // Remove modal from DOM when hidden
+    document.getElementById('playerDetailsModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+
+
+function startAnimatedDots() {
+    const dotsElement = document.getElementById('animated-dots');
+    if (!dotsElement) return;
+
+    let dotsCount = 0;
+
+    const animate = () => {
+        dotsCount = (dotsCount + 1) % 4; // 0, 1, 2, 3
+        if (dotsCount === 0) {
+            dotsElement.textContent = '';
+        } else {
+            dotsElement.textContent = '.'.repeat(dotsCount);
+        }
+    };
+
+    // Clear any existing interval
+    if (window.dotsInterval) {
+        clearInterval(window.dotsInterval);
+    }
+
+    // Start new interval
+    window.dotsInterval = setInterval(animate, 500);
+
+    // Clear interval when modal is closed
+    const modal = document.getElementById('maintenanceModal');
+    const clearDotsInterval = () => {
+        if (window.dotsInterval) {
+            clearInterval(window.dotsInterval);
+            window.dotsInterval = null;
+        }
+    };
+    
+    modal.addEventListener('hidden.bs.modal', clearDotsInterval, { once: true });
+}
+
+function showErrorToast(message) {
+    console.error(message);
+    showToast(message, 'error');
+}
+</script>
+
+<style>
+/* Custom Modal Styles */
+.modal-content {
+    background: linear-gradient(135deg, #0a0a0a 0%, #16162f 50%, #0a0a0a 100%) !important;
+    border: 2px solid rgba(255, 193, 7, 0.4) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 193, 7, 0.3) !important;
+}
+
+.modal-header {
+    padding: 1.5rem 2rem !important;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 170, 0, 0.1)) !important;
+    border-bottom: 1px solid rgba(255, 193, 7, 0.3) !important;
+    border-radius: 0 !important;
+}
+
+.player-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.player-avatar-section {
+    position: relative;
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-glow-ring {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(circle, rgba(255,215,0,0.5) 0%, rgba(255,215,0,0) 70%);
+    border-radius: 20px;
+    z-index: 0;
+}
+
+.enhanced-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 18px;
+    image-rendering: pixelated;
+    border: 5px solid #ffd700;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.enhanced-avatar:hover {
+    transform: scale(1.05);
+}
+
+.modal-player-info {
+    flex: 1;
+}
+
+.modal-player-name {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(45deg, #ffd700, #ffaa00, #ff6b35);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-player-level {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    margin-bottom: 0.5rem;
+}
+
+.level-badge-modal {
+    font-size: 1rem;
+}
+
+.player-role {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.btn-close-modal {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-close-modal:hover {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+.modal-body-enhanced {
+    padding: 2rem !important;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+}
+
+.stats-grid-modal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card-modal {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+}
+
+.stat-card-modal:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 193, 7, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 193, 7, 0.2);
+}
+
+.stat-value-modal {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label-modal {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.performance-section-modal {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.performance-title-modal {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.performance-grid-modal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.5rem;
+}
+
+.performance-item-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.performance-value-modal {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.3rem;
+}
+
+.performance-label-modal {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-modal-primary {
+    background: linear-gradient(45deg, #ffd700, #ffaa00);
+    border: none;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.btn-modal-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.btn-modal-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-modal-secondary:hover {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffd700;
+    transform: translateY(-2px);
+}
+
+/* Maintenance Modal Styles */
+.maintenance-gear {
+    animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.maintenance-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#animated-dots {
+    display: inline-block;
+    min-width: 20px;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+    }
+
+    .stats-grid-modal {
+        grid-template-columns: 1fr;
+    }
+
+    .player-header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .enhanced-avatar {
+        width: 70px;
+        height: 70px;
+    }
+
+    .modal-player-name {
+        font-size: 1.5rem;
+    }
+
+    .modal-body-enhanced {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Enhanced Modal Elements - Roles, Titles, Badges */
+.player-role-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.player-role {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: rgba(255, 193, 7, 0.15);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.player-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 3px 6px;
+    border-radius: 6px;
+    background: rgba(147, 51, 234, 0.15);
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.player-badges-section {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.badges-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.badge-item-modal {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 80px;
+    cursor: pointer;
+}
+
+.badge-item-modal:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 193, 7, 0.4);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.badge-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.badge-item-modal small {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.more-badges {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 170, 0, 0.1));
+    border-color: rgba(255, 193, 7, 0.4);
+    color: #ffd700;
+    font-weight: 700;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+}
+
+/* Gradient Text Animation */
+.gradient-text {
+    animation: gradient-animation 3s ease-in-out infinite;
+}
+
+@keyframes gradient-animation {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Mobile optimizations for badges */
+@media (max-width: 768px) {
+    .badges-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+    
+    .badge-item-modal {
+        padding: 0.8rem;
+        min-height: 70px;
+    }
+    
+    .badge-emoji {
+        font-size: 1.2rem;
+    }
+    
+    .player-role-container {
+        align-items: center;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="leaderboard-page">
+    <div class="leaderboard-header">
+        <h1 class="leaderboard-title elite-squad-enhanced">ELITE SQUAD</h1>
+        <p class="leaderboard-subtitle" id="currentGamemodeTitle">Лидерборд <span id="gamemode-name">Bedwars</span></p>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+        <div class="controls-container">
+            <div class="search-section">
+                <form method="GET" class="search-form">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" name="search"
+                               value="{{ search_query }}" placeholder="Поиск игрока...">
+                        <input type="hidden" name="sort" value="{{ current_sort }}">
+                        <input type="hidden" name="limit" value="{{ limit }}">
+                    </div>
+                </form>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <span class="filter-label">
+                        <i class="fas fa-sort me-1"></i>Сортировка:
+                    </span>
+                    <select class="modern-select" onchange="location.href=this.value">
+                        <option value="?sort=experience&limit={{ limit }}" {{ 'selected' if current_sort == 'experience' }}>Уровень</option>
+                        <option value="?sort=kills&limit={{ limit }}" {{ 'selected' if current_sort == 'kills' }}>Убийства</option>
+                        <option value="?sort=final_kills&limit={{ limit }}" {{ 'selected' if current_sort == 'final_kills' }}>Финальные убийства</option>
+                        <option value="?sort=beds_broken&limit={{ limit }}" {{ 'selected' if current_sort == 'beds_broken' }}>Кровати сломано</option>
+                        <option value="?sort=wins&limit={{ limit }}" {{ 'selected' if current_sort == 'wins' }}>Победы</option>
+                        <option value="?sort=karma&limit={{ limit }}" {{ 'selected' if current_sort == 'karma' }}>Карма</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">
+                        <i class="fas fa-list me-1"></i>Показать:
+                    </span>
+                    <select class="modern-select" onchange="updateLimit(this.value)">
+                        <option value="25" {{ 'selected' if limit == 25 }}>25</option>
+                        <option value="50" {{ 'selected' if limit == 50 }}>50</option>
+                        <option value="100" {{ 'selected' if limit == 100 }}>100</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gamemode Navigation -->
+    <div class="gamemode-nav">
+        <button class="gamemode-btn active" data-gamemode="bedwars" onclick="switchGamemode('bedwars', 'Bedwars')">
+            <i class="fas fa-bed me-1"></i>Bedwars
+        </button>
+        <button class="gamemode-btn" data-gamemode="kitpvp" onclick="switchGamemode('kitpvp', 'KitPVP')">
+            <i class="fas fa-sword me-1"></i>KitPVP
+        </button>
+        <button class="gamemode-btn" data-gamemode="skywars" onclick="switchGamemode('skywars', 'SkyWars')">
+            <i class="fas fa-cloud me-1"></i>SkyWars
+        </button>
+        <button class="gamemode-btn" data-gamemode="bridgefight" onclick="switchGamemode('bridgefight', 'BridgeFight')">
+            <i class="fas fa-bridge-water me-1"></i>BridgeFight
+        </button>
+        <button class="gamemode-btn" data-gamemode="sumo" onclick="switchGamemode('sumo', 'Sumo')">
+            <i class="fas fa-fist-raised me-1"></i>Sumo
+        </button>
+        <button class="gamemode-btn" data-gamemode="fireball_fight" onclick="switchGamemode('fireball_fight', 'Fireball Fight')">
+            <i class="fas fa-fire me-1"></i>Fireball Fight
+        </button>
+        <button class="gamemode-btn" data-gamemode="bridge" onclick="switchGamemode('bridge', 'Bridge')">
+            <i class="fas fa-archway me-1"></i>Bridge
+        </button>
+    </div>
+
+    <!-- Leaderboard Content -->
+    <div class="leaderboard-container">
+        <div class="leaderboard-content" id="leaderboardContent">
+            {% if players %}
+                {% for player in players %}
+                <div class="player-card {{ 'rank-' + loop.index|string if loop.index <= 3 }}">
+                    <div class="player-content">
+                        <!-- Rank Section -->
+                        <div class="rank-section">
+                            {% if loop.index == 1 %}
+                                <div class="rank-badge gold">
+                                    <i class="fas fa-crown rank-icon"></i>
+                                    <span class="rank-number">{{ loop.index }}</span>
+                                </div>
+                            {% elif loop.index == 2 %}
+                                <div class="rank-badge silver">
+                                    <i class="fas fa-medal rank-icon"></i>
+                                    <span class="rank-number">{{ loop.index }}</span>
+                                </div>
+                            {% elif loop.index == 3 %}
+                                <div class="rank-badge bronze">
+                                    <i class="fas fa-award rank-icon"></i>
+                                    <span class="rank-number">{{ loop.index }}</span>
+                                </div>
+                            {% else %}
+                                <div class="rank-badge">
+                                    <span class="rank-number">#{{ loop.index }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Player Section -->
+                        <div class="player-section">
+                            <div class="player-avatar-container" onclick="showPlayerDetails({{ player.id }})">
+                                <img src="{{ player.minecraft_skin_url or 'https://mc-heads.net/avatar/steve/50' }}"
+                                     alt="{{ player.nickname }}" class="player-avatar" style="cursor: pointer;">
+                            </div>
+                            <div class="player-info">
+                                <!-- Player name with gradient support -->
+                                {% if player.nickname_gradient %}
+                                <a href="{{ url_for('public_profile', player_id=player.id) }}" 
+                                   class="player-name gradient-text gradient-animated" 
+                                   style="background: {{ player.nickname_gradient }}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                    {{ player.nickname }}
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('public_profile', player_id=player.id) }}" class="player-name">
+                                    {{ player.nickname }}
+                                </a>
+                                {% endif %}
+                                
+                                <!-- Player roles and titles -->
+                                <div class="player-meta-info">
+                                    {% if player.display_role or player.role %}
+                                        {% if player.role_gradient %}
+                                        <span class="player-role-leaderboard gradient-text gradient-animated" 
+                                              style="background: {{ player.role_gradient }}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            <i class="fas fa-crown"></i> {{ player.display_role or player.role }}
+                                        </span>
+                                        {% else %}
+                                        <span class="player-role-leaderboard">
+                                            <i class="fas fa-crown"></i> {{ player.display_role or player.role }}
+                                        </span>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    {% if player.active_custom_title %}
+                                        {% if player.title_gradient %}
+                                        <span class="player-title-leaderboard gradient-text gradient-animated" 
+                                              style="background: {{ player.title_gradient }}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                            <i class="fas fa-medal"></i> {{ player.active_custom_title }}
+                                        </span>
+                                        {% else %}
+                                        <span class="player-title-leaderboard">
+                                            <i class="fas fa-medal"></i> {{ player.active_custom_title }}
+                                        </span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Player badges -->
+                                <div class="player-badges-inline">
+                                    {% if player.visible_badges %}
+                                        {% for badge in player.visible_badges[:3] %}
+                                        <span class="badge-mini badge-{{ badge.rarity }}" title="{{ badge.description or badge.display_name }}">
+                                            {{ badge.emoji or '🏆' }}
+                                        </span>
+                                        {% endfor %}
+                                        {% if player.visible_badges|length > 3 %}
+                                        <span class="badge-count">+{{ player.visible_badges|length - 3 }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Level Section -->
+                        <div class="level-section">
+                            <div class="level-badge">
+                                <span class="level-number">{{ player.level or 1 }}</span>
+                                <span class="level-label">Уровень</span>
+                            </div>
+                        </div>
+
+                        <!-- Stats Section -->
+                        <div class="stats-section">
+                            <div class="stat-item">
+                                {% if player.stats_gradient %}
+                                <span class="stat-value gradient-text gradient-animated" 
+                                      style="background: {{ player.stats_gradient }}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                    {{ player.kills or 0 }}
+                                </span>
+                                {% else %}
+                                <span class="stat-value">{{ player.kills or 0 }}</span>
+                                {% endif %}
+                                <span class="stat-label">K</span>
+                            </div>
+                            <div class="stat-item">
+                                {% if player.stats_gradient %}
+                                <span class="stat-value gradient-text gradient-animated" 
+                                      style="background: {{ player.stats_gradient }}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                    {{ player.final_kills or 0 }}
+                                </span>
+                                {% else %}
+                                <span class="stat-value">{{ player.final_kills or 0 }}</span>
+                                {% endif %}
+                                <span class="stat-label">FK</span>
+                            </div>
+                            <div class="stat-item">
+                                {% if player.stats_gradient %}
+                                <span class="stat-value gradient-text gradient-animated" 
+                                      style="background: {{ player.stats_gradient }}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                    {{ player.beds_broken or 0 }}
+                                </span>
+                                {% else %}
+                                <span class="stat-value">{{ player.beds_broken or 0 }}</span>
+                                {% endif %}
+                                <span class="stat-label">B</span>
+                            </div>
+                        </div>
+
+                        <!-- Win Rate Section -->
+                        <div class="winrate-section">
+                            <div class="winrate-display">
+                                {% set winrate = ((player.wins / player.games_played * 100) if player.games_played and player.games_played > 0 else 0)|round(1) %}
+                                <span class="winrate-value {{ 'winrate-high' if winrate >= 50 else 'winrate-medium' if winrate >= 40 else 'winrate-low' }}">
+                                    {{ winrate }}%
+                                </span>
+                                <div class="winrate-bar">
+                                    <div class="winrate-progress {{ 'winrate-high' if winrate >= 50 else 'winrate-medium' if winrate >= 40 else 'winrate-low' }}"
+                                         style="width: {{ winrate }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- K/D Section -->
+                        <div class="kd-section">
+                            <div class="kd-display">
+                                {% set kd_ratio = ((player.kills / player.deaths) if player.deaths and player.deaths > 0 else (player.kills or 0))|round(2) %}
+                                <span class="kd-value {{ 'kd-positive' if kd_ratio >= 1.0 else 'kd-negative' }}">
+                                    {{ kd_ratio }}
+                                </span>
+                                <span class="kd-label">K/D</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Нет игроков</h3>
+                    <p>Список лидеров пуст</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Player Stats Modal -->
+<div class="modal fade player-stats-modal" id="playerDetailsModal" tabindex="-1" aria-labelledby="playerDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modern-modal">
+            <div class="modal-header enhanced-header">
+                <div class="player-header-content">
+                    <div class="player-avatar-section">
+                        <div class="avatar-container" id="modal-avatar-container">
+                            <div class="avatar-glow-ring"></div>
+                            <img id="modal-player-avatar" class="enhanced-avatar" 
+                                 src="https://mc-heads.net/avatar/steve/90" alt="Player Avatar">
+                        </div>
+                    </div>
+                    <div class="modal-player-info">
+                        <h3 class="modal-player-name" id="modal-player-name">Player Name</h3>
+                        <div class="modal-player-level" id="modal-player-level">
+                            <i class="fas fa-star"></i>
+                            <span class="level-badge-modal">Level 1</span>
+                        </div>
+                        <div class="player-role" id="modal-player-role">Player</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close-modal" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body modal-body-enhanced">
+                <div class="stats-grid-modal">
+                    <div class="stat-card-modal">
+                        <span class="stat-value-modal" id="modal-kills">0</span>
+                        <span class="stat-label-modal">
+                            <i class="fas fa-sword"></i> Kills
+                        </span>
+                    </div>
+                    <div class="stat-card-modal">
+                        <span class="stat-value-modal" id="modal-deaths">0</span>
+                        <span class="stat-label-modal">
+                            <i class="fas fa-skull"></i> Deaths
+                        </span>
+                    </div>
+                    <div class="stat-card-modal">
+                        <span class="stat-value-modal" id="modal-final-kills">0</span>
+                        <span class="stat-label-modal">
+                            <i class="fas fa-crosshairs"></i> Final Kills
+                        </span>
+                    </div>
+                    <div class="stat-card-modal">
+                        <span class="stat-value-modal" id="modal-beds">0</span>
+                        <span class="stat-label-modal">
+                            <i class="fas fa-bed"></i> Beds Broken
+                        </span>
+                    </div>
+                    <div class="stat-card-modal">
+                        <span class="stat-value-modal" id="modal-kd">0.00</span>
+                        <span class="stat-label-modal">
+                            <i class="fas fa-chart-line"></i> K/D Ratio
+                        </span>
+                    </div>
+                    <div class="stat-card-modal">
+                        <span class="stat-value-modal" id="modal-experience">0</span>
+                        <span class="stat-label-modal">
+                            <i class="fas fa-star"></i> Experience
+                        </span>
+                    </div>
+                </div>
+
+                <div class="performance-section-modal">
+                    <div class="performance-title-modal">
+                        <i class="fas fa-trophy"></i>
+                        <span>Game Performance</span>
+                    </div>
+                    <div class="performance-grid-modal">
+                        <div class="performance-item-modal">
+                            <span class="performance-value-modal" id="modal-games">0</span>
+                            <div class="performance-label-modal">Games Played</div>
+                        </div>
+                        <div class="performance-item-modal">
+                            <span class="performance-value-modal" id="modal-wins">0</span>
+                            <div class="performance-label-modal">Wins</div>
+                        </div>
+                        <div class="performance-item-modal">
+                            <span class="performance-value-modal" id="modal-winrate">0%</span>
+                            <div class="performance-label-modal">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <a href="#" id="modal-profile-link" class="btn btn-modal-primary">
+                        <i class="fas fa-user me-2"></i>View Profile
+                    </a>
+                    <button type="button" class="btn btn-modal-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Maintenance Modal (Other Gamemodes) -->
+<div class="modal fade" id="maintenanceModal" tabindex="-1" aria-labelledby="maintenanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="maintenanceModalLabel">
+                    <i class="fas fa-cog me-2 text-danger"></i>UNDER MAINTENANCE
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="maintenance-icon mb-3">
+                    <i class="fas fa-cog fa-3x text-danger maintenance-gear"></i>
+                </div>
+                <h6 class="mb-3">Данная функция экспериментальная</h6>
+                <p class="text-muted mb-3">
+                    Доступна только для <strong>BEDWARS</strong> лидерборда.
+                </p>
+                <div class="maintenance-footer">
+                    <small class="text-muted">
+                        be patient<span id="animated-dots">...</span>
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced Leaderboard JavaScript
+class ModernLeaderboard {
+    constructor() {
+        this.currentGamemode = 'bedwars'; // Default gamemode
+        this.init();
+    }
+
+    init() {
+        this.setupGamemodeNavigation();
+        this.setupSearch();
+        // Load initial gamemode data based on URL or default
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialGamemode = urlParams.get('gamemode') || this.currentGamemode;
+        this.currentGamemode = initialGamemode;
+        this.loadGamemodeData(initialGamemode);
+        this.setActiveGamemodeButton(initialGamemode);
+    }
+
+    setupGamemodeNavigation() {
+        const gamemodeButtons = document.querySelectorAll('.gamemode-btn');
+
+        gamemodeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const gamemode = btn.dataset.gamemode;
+                if (gamemode !== this.currentGamemode) {
+                    this.currentGamemode = gamemode;
+                    this.loadGamemodeData(gamemode);
+                    this.setActiveGamemodeButton(gamemode);
+                    // Update URL without page reload
+                    const urlParams = new URLSearchParams(window.location.search);
+                    urlParams.set('gamemode', gamemode);
+                    window.history.pushState({}, '', `?${urlParams.toString()}`);
+                }
+            });
+        });
+    }
+
+    setActiveGamemodeButton(gamemode) {
+        const gamemodeButtons = document.querySelectorAll('.gamemode-btn');
+        gamemodeButtons.forEach(btn => {
+            if (btn.dataset.gamemode === gamemode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    setupSearch() {
+        const searchInput = document.querySelector('.search-input');
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.performSearch(searchInput.value);
+                }, 300);
+            });
+        }
+    }
+
+    async loadGamemodeData(gamemode) {
+        const leaderboardContent = document.getElementById('leaderboardContent');
+
+        // Show loading state
+        leaderboardContent.innerHTML = `
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Загрузка лидерборда ${gamemode}...</p>
+            </div>
+        `;
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Ensure gamemode parameter is always present
+            urlParams.set('gamemode', gamemode);
+            const response = await fetch(`/api/gamemode-leaderboard?${urlParams.toString()}`);
+            const data = await response.json();
+
+            if (data.success && data.players) {
+                this.renderLeaderboard(data.players, gamemode);
+                this.updateGamemodeTitle(data.gamemode_name || gamemode);
+            } else {
+                this.showEmptyState(gamemode, data.error);
+            }
+        } catch (error) {
+            console.error('Error loading leaderboard:', error);
+            this.showErrorState(gamemode);
+        }
+    }
+
+    renderLeaderboard(players, gamemode) {
+        const leaderboardContent = document.getElementById('leaderboardContent');
+
+        if (players.length === 0) {
+            this.showEmptyState(gamemode);
+            return;
+        }
+
+        const playersHtml = players.map((player, index) => {
+            const rank = index + 1;
+            const stats = this.getGamemodeStats(player, gamemode);
+            const winrate = this.calculateWinRate(player);
+            const kdRatio = this.calculateKDRatio(player);
+
+            return `
+                <div class="player-card ${rank <= 3 ? 'rank-' + rank : ''}" style="animation-delay: ${Math.min(index * 0.05, 1)}s">
+                    <div class="player-content">
+                        <div class="rank-section">
+                            ${this.getRankBadgeHtml(rank)}
+                        </div>
+
+                        <div class="player-section">
+                            <div class="player-avatar-container" onclick="showPlayerDetails(${player.id})" style="cursor: pointer;">
+                                <img src="${player.skin_url || 'https://mc-heads.net/avatar/steve/50'}"
+                                     alt="${player.nickname}" class="player-avatar">
+                            </div>
+                            <div class="player-info">
+                                <a href="/profile/${player.nickname}" class="player-name">
+                                    ${player.nickname}
+                                </a>
+                                <div class="player-role">
+                                    ${(() => {
+                                        const roleName = player.display_role || player.role || 'Игрок';
+                                        if (player.role_gradient) {
+                                            return `<span class="gradient-text gradient-animated" style="background: ${player.role_gradient}; background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"><i class="fas fa-crown me-1"></i>${roleName}</span>`;
+                                        } else {
+                                            return `<i class="fas fa-crown me-1"></i>${roleName}`;
+                                        }
+                                    })()} 
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="level-section">
+                            <div class="level-badge">
+                                <span class="level-number">${player.level || 1}</span>
+                                <span class="level-label">Уровень</span>
+                            </div>
+                        </div>
+
+                        <div class="stats-section">
+                            ${stats.map(stat => `
+                                <div class="stat-item">
+                                    <span class="stat-value">${stat.value.toLocaleString()}</span>
+                                    <span class="stat-label">${stat.label}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="winrate-section">
+                            <div class="winrate-display">
+                                <span class="winrate-value ${this.getWinRateClass(winrate)}">${winrate}%</span>
+                                <div class="winrate-bar">
+                                    <div class="winrate-progress ${this.getWinRateClass(winrate)}" style="width: ${winrate}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kd-section">
+                            <div class="kd-display">
+                                <span class="kd-value ${kdRatio >= 2.0 ? 'text-success' : kdRatio >= 1.0 ? 'text-warning' : 'text-danger'}">${kdRatio}</span>
+                                <span class="kd-label">K/D</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        leaderboardContent.innerHTML = playersHtml;
+    }
+
+    // Make the gamemode available globally for avatar clicks
+    getCurrentGamemode() {
+        return this.currentGamemode;
+    }
+
+    getRankBadgeHtml(rank) {
+        if (rank === 1) {
+            return `
+                <div class="rank-badge gold">
+                    <i class="fas fa-crown rank-icon"></i>
+                    <span class="rank-number">${rank}</span>
+                </div>
+            `;
+        } else if (rank === 2) {
+            return `
+                <div class="rank-badge silver">
+                    <i class="fas fa-medal rank-icon"></i>
+                    <span class="rank-number">${rank}</span>
+                </div>
+            `;
+        } else if (rank === 3) {
+            return `
+                <div class="rank-badge bronze">
+                    <i class="fas fa-award rank-icon"></i>
+                    <span class="rank-number">${rank}</span>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="rank-badge">
+                    <span class="rank-number">#${rank}</span>
+                </div>
+            `;
+        }
+    }
+
+    getGamemodeStats(player, gamemode) {
+        const statMappings = {
+            bedwars: [
+                { label: 'K', value: player.kills || 0 },
+                { label: 'FK', value: player.final_kills || 0 },
+                { label: 'B', value: player.beds_broken || 0 }
+            ],
+            kitpvp: [
+                { label: 'K', value: player.kills || 0 },
+                { label: 'D', value: player.deaths || 0 },
+                { label: 'KS', value: player.killstreak || 0 }
+            ],
+            skywars: [
+                { label: 'K', value: player.kills || 0 },
+                { label: 'W', value: player.wins || 0 },
+                { label: 'G', value: player.games_played || 0 }
+            ],
+            bridgefight: [
+                { label: 'W', value: player.wins || 0 },
+                { label: 'L', value: (player.games_played || 0) - (player.wins || 0) },
+                { label: 'G', value: player.games_played || 0 }
+            ],
+            sumo: [
+                { label: 'W', value: player.wins || 0 },
+                { label: 'L', value: (player.games_played || 0) - (player.wins || 0) },
+                { label: 'WS', value: player.winstreak || 0 }
+            ],
+            fireball_fight: [
+                { label: 'K', value: player.kills || 0 },
+                { label: 'W', value: player.wins || 0 },
+                { label: 'G', value: player.games_played || 0 }
+            ],
+            bridge: [
+                { label: 'G', value: player.goals || 0 },
+                { label: 'W', value: player.wins || 0 },
+                { label: 'L', value: (player.games_played || 0) - (player.wins || 0) }
+            ]
+        };
+
+        return statMappings[gamemode] || statMappings.bedwars; // Fallback to bedwars if gamemode not found
+    }
+
+    calculateWinRate(player) {
+        if (!player.games_played || player.games_played === 0) return 0;
+        return Math.round((player.wins || 0) / player.games_played * 100);
+    }
+
+    calculateKDRatio(player) {
+        if (!player.deaths || player.deaths === 0) return (player.kills || 0); // Handle division by zero, return kills if no deaths
+        return ((player.kills || 0) / player.deaths).toFixed(2);
+    }
+
+    getWinRateClass(winrate) {
+        if (winrate >= 50) return 'winrate-high';
+        if (winrate >= 40) return 'winrate-medium';
+        return 'winrate-low';
+    }
+
+    showEmptyState(gamemode, errorMessage = null) {
+        const leaderboardContent = document.getElementById('leaderboardContent');
+        let message = `Список лидеров для ${gamemode} пуст`;
+        if (errorMessage) {
+            message = errorMessage;
+        }
+        leaderboardContent.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Нет игроков</h3>
+                <p>${message}</p>
+            </div>
+        `;
+    }
+
+    showErrorState(gamemode) {
+        const leaderboardContent = document.getElementById('leaderboardContent');
+        leaderboardContent.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Ошибка загрузки</h3>
+                <p>Не удалось загрузить данные лидерборда для ${gamemode}.</p>
+                <button class="btn btn-primary" onclick="leaderboard.loadGamemodeData('${gamemode}')">
+                    Попробовать снова
+                </button>
+            </div>
+        `;
+    }
+
+    updateGamemodeTitle(gamemodeName) {
+        const titleElement = document.getElementById('currentGamemodeTitle');
+        if (titleElement) {
+            titleElement.textContent = `Лидерборд ${gamemodeName}`;
+        }
+    }
+
+    performSearch(query) {
+        // Only perform search if query is 2+ chars or empty
+        if (query.length >= 2 || query.length === 0) {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (query) {
+                urlParams.set('search', query);
+            } else {
+                urlParams.delete('search');
+            }
+            // Preserve current gamemode when searching
+            urlParams.set('gamemode', this.currentGamemode);
+            window.location.search = urlParams.toString();
+        }
+    }
+}
+
+// Global function for limit update, must be accessible by inline `onchange`
+function updateLimit(newLimit) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('limit', newLimit);
+    // Preserve current gamemode when changing limit
+    if (window.leaderboard && window.leaderboard.currentGamemode) {
+        urlParams.set('gamemode', window.leaderboard.currentGamemode);
+    }
+    window.location.search = urlParams.toString();
+}
+
+
+function startAnimatedDots() {
+    const dotsElement = document.getElementById('animated-dots');
+    if (!dotsElement) return;
+
+    let dotsCount = 0;
+
+    const animate = () => {
+        dotsCount = (dotsCount + 1) % 4; // 0, 1, 2, 3
+        dotsElement.textContent = '.'.repeat(dotsCount);
+    };
+
+    if (window.dotsInterval) {
+        clearInterval(window.dotsInterval);
+    }
+    window.dotsInterval = setInterval(animate, 500);
+
+    const modal = document.getElementById('maintenanceModal');
+    modal.addEventListener('hidden.bs.modal', () => {
+        if (window.dotsInterval) {
+            clearInterval(window.dotsInterval);
+            window.dotsInterval = null;
+        }
+    });
+}
+
+// Initialize leaderboard when DOM is ready
+let leaderboard;
+document.addEventListener('DOMContentLoaded', function() {
+    requestAnimationFrame(() => {
+        leaderboard = new ModernLeaderboard();
+        window.leaderboard = leaderboard; // Make globally available
+        console.log('🎮 Elite Squad initialized successfully!');
+    });
+});
+</script>
+{% endblock %}

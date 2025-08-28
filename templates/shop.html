@@ -1,0 +1,1189 @@
+{% extends "base.html" %}
+
+{% block title %}Магазин - Elite Squad{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Enhanced Shop Visual Effects */
+.hero-section {
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 193, 7, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(220, 53, 69, 0.05) 0%, transparent 50%);
+    border-radius: 20px;
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.1), transparent);
+    animation: shimmer 3s infinite;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #ffc107, #ff9800, #ffeb3b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 3s ease-in-out infinite;
+    font-weight: 900;
+    text-shadow: 0 0 30px rgba(255, 193, 7, 0.5);
+}
+
+.glow-effect {
+    filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.6));
+    animation: iconGlow 2s ease-in-out infinite alternate;
+}
+
+.coins-display, .reputation-display {
+    background: rgba(26, 26, 26, 0.8);
+    padding: 8px 15px;
+    border-radius: 25px;
+    border: 2px solid rgba(255, 193, 7, 0.4);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.coins-display:hover, .reputation-display:hover {
+    border-color: rgba(255, 193, 7, 0.8);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Enhanced Shop Item Cards */
+.shop-item-card {
+    background: rgba(26, 26, 26, 0.95) !important;
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    animation: cardFadeIn 0.6s ease-out;
+}
+
+.shop-item-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: var(--rarity-gradient);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: subtract;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: subtract;
+    opacity: 0.7;
+}
+
+.shop-item-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--rarity-shadow);
+}
+
+.shop-item-card:hover::before {
+    opacity: 1;
+    animation: rarityPulse 2s ease-in-out infinite;
+}
+
+/* Rarity-based styling */
+.shop-item-rarity-common {
+    --rarity-gradient: linear-gradient(45deg, #6c757d, #adb5bd);
+    --rarity-shadow: 0 15px 40px rgba(108, 117, 125, 0.3);
+}
+
+.shop-item-rarity-uncommon {
+    --rarity-gradient: linear-gradient(45deg, #28a745, #20c997);
+    --rarity-shadow: 0 15px 40px rgba(40, 167, 69, 0.4);
+}
+
+.shop-item-rarity-rare {
+    --rarity-gradient: linear-gradient(45deg, #007bff, #17a2b8);
+    --rarity-shadow: 0 15px 40px rgba(0, 123, 255, 0.4);
+}
+
+.shop-item-rarity-epic {
+    --rarity-gradient: linear-gradient(45deg, #6f42c1, #e83e8c);
+    --rarity-shadow: 0 15px 40px rgba(111, 66, 193, 0.5);
+}
+
+.shop-item-rarity-legendary {
+    --rarity-gradient: linear-gradient(45deg, #ffc107, #fd7e14, #ff6347);
+    --rarity-shadow: 0 15px 40px rgba(255, 193, 7, 0.6);
+}
+
+.shop-item-rarity-mythic {
+    --rarity-gradient: linear-gradient(45deg, #ff0040, #ff4081, #9c27b0, #3f51b5);
+    --rarity-shadow: 0 15px 40px rgba(255, 64, 129, 0.7);
+}
+
+/* Enhanced Icons */
+.shop-item-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.shop-item-icon i {
+    font-size: 2.5rem;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.shop-item-card:hover .shop-item-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.shop-item-card:hover .shop-item-icon i {
+    animation: iconBounce 0.6s ease-in-out;
+}
+
+/* Rarity badges with effects */
+.rarity-common { 
+    background: linear-gradient(45deg, #6c757d, #adb5bd) !important; 
+    color: white !important;
+}
+.rarity-uncommon { 
+    background: linear-gradient(45deg, #28a745, #20c997) !important; 
+    color: white !important;
+}
+.rarity-rare { 
+    background: linear-gradient(45deg, #007bff, #17a2b8) !important; 
+    color: white !important;
+}
+.rarity-epic { 
+    background: linear-gradient(45deg, #6f42c1, #e83e8c) !important; 
+    color: white !important;
+    box-shadow: 0 0 15px rgba(111, 66, 193, 0.5);
+}
+.rarity-legendary { 
+    background: linear-gradient(45deg, #ffc107, #fd7e14) !important; 
+    color: #1a1a1a !important;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+    animation: legendaryGlow 2s ease-in-out infinite alternate;
+}
+.rarity-mythic { 
+    background: linear-gradient(45deg, #ff0040, #ff4081, #9c27b0) !important; 
+    color: white !important;
+    font-weight: bold;
+    box-shadow: 0 0 25px rgba(255, 64, 129, 0.8);
+    animation: mythicPulse 1.5s ease-in-out infinite;
+}
+
+/* Enhanced Purchase Buttons */
+.purchase-btn {
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.purchase-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.purchase-btn:hover:before {
+    left: 100%;
+}
+
+.purchase-btn.rarity-legendary:hover {
+    box-shadow: 0 0 30px rgba(255, 193, 7, 0.5);
+    transform: scale(1.05);
+}
+
+.purchase-btn.rarity-mythic:hover {
+    box-shadow: 0 0 35px rgba(255, 64, 129, 0.6);
+    transform: scale(1.05);
+    animation: mythicButtonPulse 0.5s ease-in-out;
+}
+
+/* Category Buttons Enhancement */
+.btn-outline-warning {
+    border: 2px solid rgba(255, 193, 7, 0.5);
+    color: #ffc107;
+    background: rgba(26, 26, 26, 0.8);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-outline-warning:hover,
+.btn-outline-warning.active {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: #ffc107;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-outline-warning:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: buttonShimmer 0.8s ease-out;
+}
+
+/* Purchased and Locked states */
+.shop-item-card.purchased {
+    opacity: 0.8;
+    filter: saturate(0.6);
+}
+
+.shop-item-card.purchased::after {
+    content: '✓';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+}
+
+.shop-item-card.locked {
+    opacity: 0.4;
+    filter: grayscale(0.8);
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes iconGlow {
+    0% { filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.4)); }
+    100% { filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.8)); }
+}
+
+@keyframes cardFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes rarityPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: scale(1.1) rotate(5deg); }
+    50% { transform: scale(1.2) rotate(-5deg); }
+}
+
+@keyframes legendaryGlow {
+    0% { box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); }
+    100% { box-shadow: 0 0 30px rgba(255, 193, 7, 0.8); }
+}
+
+@keyframes mythicPulse {
+    0%, 100% { 
+        box-shadow: 0 0 25px rgba(255, 64, 129, 0.6);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 35px rgba(255, 64, 129, 1);
+        transform: scale(1.02);
+    }
+}
+
+@keyframes mythicButtonPulse {
+    0%, 100% { transform: scale(1.05); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes buttonShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Particle Effects */
+.shop-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.shop-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffc107;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat 3s linear infinite;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(90vh) scale(1);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(10vh) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(0) scale(0);
+    }
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    .shop-item-card:hover {
+        transform: none;
+    }
+    
+    .shop-particles {
+        display: none;
+    }
+    
+    .purchase-btn:hover:before {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="hero-section p-4 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-store text-warning me-3 glow-effect"></i>
+                    <span class="gradient-text">Магазин</span>
+                </h1>
+                <p class="lead text-light">Покупайте титулы, бустеры, темы и кастомизацию</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                {% if current_player %}
+                <div class="d-flex flex-column gap-2">
+                    <div class="coins-display">
+                        <i class="fas fa-coins me-2"></i>{{ current_player.coins }} койнов
+                    </div>
+                    <div class="reputation-display">
+                        <i class="fas fa-star me-2"></i>{{ current_player.reputation }} репутации
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if not current_player %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Необходимо <a href="{{ url_for('player_login') }}" class="alert-link">войти в систему</a> для доступа к магазину!
+    </div>
+    {% else %}
+
+    <!-- Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-warning active" data-category="all">
+                    <i class="fas fa-th me-1"></i>Все
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="title">
+                    <i class="fas fa-crown me-1"></i>Титулы
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="booster">
+                    <i class="fas fa-rocket me-1"></i>Бустеры
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="gradient">
+                    <i class="fas fa-brush me-1"></i>Градиенты
+                </button>
+                <button type="button" class="btn btn-outline-warning" data-category="custom_role">
+                    <i class="fas fa-user-tag me-1"></i>Роли
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particle System -->
+    <div class="shop-particles" id="shopParticles"></div>
+
+    <!-- Shop Items -->
+    <div class="row" id="shop-items">
+        {% for category, items in shop_data.items() %}
+            {% for item_data in items %}
+                {% set item = item_data.item %}
+                {% set can_buy = item_data.can_purchase %}
+                {% set reason = item_data.purchase_error %}
+                {% set is_purchased = item_data.already_purchased %}
+        <div class="col-lg-4 col-md-6 mb-4 shop-item-container" data-category="{{ item.category }}" data-rarity="{{ item.rarity }}">
+
+            <div class="shop-item-card shop-item-rarity-{{ item.rarity }} {% if is_purchased %}purchased{% elif not can_buy %}locked{% endif %}">
+                <!-- Rarity indicator -->
+                <div class="position-absolute top-0 end-0 p-2">
+                    <span class="badge rarity-{{ item.rarity }}">
+                        {% if item.rarity == 'common' %}Обычный
+                        {% elif item.rarity == 'uncommon' %}Необычный
+                        {% elif item.rarity == 'rare' %}Редкий
+                        {% elif item.rarity == 'epic' %}Эпический
+                        {% elif item.rarity == 'legendary' %}Легендарный
+                        {% elif item.rarity == 'mythic' %}Мифический
+                        {% else %}{{ item.rarity.title() }}
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="text-center mb-3">
+                    <div class="shop-item-icon">
+                        <i class="{{ item.icon }} rarity-{{ item.rarity }}"></i>
+                    </div>
+                    <h5 class="mb-2">{{ item.display_name }}</h5>
+                    <p class="text-muted mb-0">{{ item.description }}</p>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex flex-wrap gap-1">
+                        {% if item.price_coins > 0 %}
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-coins me-1"></i>{{ "{:,}".format(item.price_coins) }}
+                        </span>
+                        {% endif %}
+                        {% if item.price_reputation > 0 %}
+                        <span class="badge bg-info">
+                            <i class="fas fa-star me-1"></i>{{ item.price_reputation }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if item.unlock_level > 1 %}
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-level-up-alt me-1"></i>{{ item.unlock_level }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    {% if is_purchased %}
+                    <button class="btn btn-success w-100" disabled>
+                        <i class="fas fa-check me-2"></i>Куплено
+                    </button>
+                    {% elif can_buy and current_player %}
+                    <button class="btn btn-primary w-100 purchase-btn rarity-{{ item.rarity }}" 
+                                    data-item-id="{{ item.id }}" 
+                                    data-item-name="{{ item.display_name }}"
+                                    data-cost-coins="{{ item.price_coins }}" 
+                                    data-cost-reputation="{{ item.price_reputation }}"
+                                    data-rarity="{{ item.rarity }}"
+                                    onclick="purchaseItem({{ item.id }})"
+                                    {% if not can_buy %}disabled{% endif %}>
+                                <i class="fas fa-shopping-cart me-2"></i>
+                                <span class="btn-text">
+                                    {% if can_buy %}
+                                        Купить за 
+                                        {% if item.price_coins > 0 %}{{ item.price_coins }} <i class="fas fa-coins"></i>{% endif %}
+                                        {% if item.price_reputation > 0 %}{{ item.price_reputation }} <i class="fas fa-heart"></i>{% endif %}
+                                    {% else %}
+                                        {{ reason }}
+                                    {% endif %}
+                                </span>
+                            </button>
+                    {% else %}
+                    <button class="btn btn-secondary w-100" disabled title="{{ reason }}">
+                        <i class="fas fa-lock me-2"></i>{{ reason.split()[:2] | join(' ') }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <!-- Limited time indicator -->
+                {% if item.is_limited_time %}
+                <div class="mt-3 text-center">
+                    <small class="text-warning">
+                        <i class="fas fa-clock me-1"></i>Ограниченное предложение
+                    </small>
+                </div>
+                {% endif %}
+
+                <!-- Category indicator -->
+                <div class="mt-2 text-center">
+                    <small class="text-muted">
+                        {% if item.category == 'title' %}
+                            <i class="fas fa-crown me-1"></i>Титул
+                        {% elif item.category == 'booster' %}
+                            <i class="fas fa-rocket me-1"></i>Бустер
+                        {% elif item.category == 'theme' %}
+                            <i class="fas fa-palette me-1"></i>Тема
+                        {% elif item.category == 'gradient' %}
+                            <i class="fas fa-brush me-1"></i>Градиент
+                        {% elif item.category == 'avatar' %}
+                            <i class="fas fa-user-circle me-1"></i>Аватар
+                        {% elif item.category == 'cursor' %}
+                            <i class="fas fa-mouse-pointer me-1"></i>Курсор
+                        {% elif item.category == 'custom_role' %}
+                            <i class="fas fa-user-tag me-1"></i>Кастомная роль
+                        {% else %}
+                            {{ item.category.title() }}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+
+    {% if not shop_items %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-bag fa-5x text-muted mb-3"></i>
+        <h3 class="text-muted">Магазин пуст</h3>
+        <p class="text-muted">Товары скоро появятся!</p>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+
+<script>
+// Enhanced Shop Effects System
+class ShopEffectsManager {
+    constructor() {
+        this.particleCount = 0;
+        this.maxParticles = 15;
+        this.init();
+    }
+
+    init() {
+        this.initCategoryFiltering();
+        this.initParticleSystem();
+        this.initCardEffects();
+        this.initPurchaseSystem();
+        this.staggerCardAnimations();
+    }
+
+    // Stagger card animations on load
+    staggerCardAnimations() {
+        const cards = document.querySelectorAll('.shop-item-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    }
+
+    // Enhanced category filtering with particles
+    initCategoryFiltering() {
+        const categoryButtons = document.querySelectorAll('[data-category]');
+        const shopItems = document.querySelectorAll('.shop-item-container');
+
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const category = btn.dataset.category;
+
+                // Create click effect
+                this.createButtonClickEffect(e.target);
+
+                // Update active button
+                categoryButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Filter items with enhanced animation
+                shopItems.forEach((item, index) => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = '';
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px)';
+                        
+                        setTimeout(() => {
+                            item.style.transition = 'all 0.5s ease';
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, index * 50);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(-20px)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 300);
+                    }
+                });
+
+                // Trigger particles
+                this.createCategoryParticles(btn, category);
+            });
+        });
+    }
+
+    // Particle system
+    initParticleSystem() {
+        // Create background particles
+        setInterval(() => {
+            if (this.particleCount < this.maxParticles) {
+                this.createFloatingParticle();
+            }
+        }, 2000);
+
+        // Hero section particles
+        const heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+            heroSection.addEventListener('mouseenter', () => {
+                this.createHeroParticles();
+            });
+        }
+    }
+
+    // Card hover effects
+    initCardEffects() {
+        const cards = document.querySelectorAll('.shop-item-card');
+        
+        cards.forEach(card => {
+            const rarity = card.classList.toString().match(/shop-item-rarity-(\w+)/)?.[1];
+            
+            card.addEventListener('mouseenter', () => {
+                this.createCardHoverEffect(card, rarity);
+                this.playHoverSound(rarity);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                this.clearCardEffects(card);
+            });
+
+            // Icon click effect
+            const icon = card.querySelector('.shop-item-icon');
+            if (icon) {
+                icon.addEventListener('click', () => {
+                    this.createIconClickEffect(icon, rarity);
+                });
+            }
+        });
+    }
+
+    // Enhanced purchase system
+    initPurchaseSystem() {
+        const purchaseButtons = document.querySelectorAll('.purchase-btn');
+        
+        purchaseButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const rarity = btn.dataset.rarity;
+                this.createPurchaseEffect(btn, rarity);
+            });
+        });
+    }
+
+    // Particle creation methods
+    createFloatingParticle() {
+        const particle = document.createElement('div');
+        particle.className = 'shop-particle';
+        
+        const colors = ['#ffc107', '#ff9800', '#ffeb3b', '#f44336', '#9c27b0'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDuration = (2 + Math.random() * 2) + 's';
+        particle.style.animationDelay = Math.random() * 2 + 's';
+        
+        const container = document.getElementById('shopParticles');
+        if (container) {
+            container.appendChild(particle);
+            this.particleCount++;
+            
+            setTimeout(() => {
+                particle.remove();
+                this.particleCount--;
+            }, 4000);
+        }
+    }
+
+    createHeroParticles() {
+        const heroSection = document.querySelector('.hero-section');
+        const rect = heroSection.getBoundingClientRect();
+        
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 6px;
+                    height: 6px;
+                    background: radial-gradient(circle, #ffc107, #ff9800);
+                    border-radius: 50%;
+                    left: ${rect.left + Math.random() * rect.width}px;
+                    top: ${rect.top + Math.random() * rect.height}px;
+                    animation: particleFly 2s ease-out forwards;
+                    z-index: 1000;
+                    pointer-events: none;
+                    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+                `;
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 2000);
+            }, i * 100);
+        }
+    }
+
+    createCardHoverEffect(card, rarity) {
+        const rarityConfig = {
+            'common': { color: '#6c757d', intensity: 3 },
+            'uncommon': { color: '#28a745', intensity: 5 },
+            'rare': { color: '#007bff', intensity: 7 },
+            'epic': { color: '#6f42c1', intensity: 10 },
+            'legendary': { color: '#ffc107', intensity: 15 },
+            'mythic': { color: '#ff0040', intensity: 20 }
+        };
+
+        const config = rarityConfig[rarity] || rarityConfig.common;
+        const rect = card.getBoundingClientRect();
+
+        for (let i = 0; i < config.intensity; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 4px;
+                    height: 4px;
+                    background: ${config.color};
+                    border-radius: 50%;
+                    left: ${rect.left + Math.random() * rect.width}px;
+                    top: ${rect.top + rect.height}px;
+                    animation: particleFly 1s ease-out forwards;
+                    z-index: 1000;
+                    pointer-events: none;
+                    box-shadow: 0 0 8px ${config.color};
+                `;
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }, i * 50);
+        }
+    }
+
+    createButtonClickEffect(button) {
+        const rect = button.getBoundingClientRect();
+        
+        for (let i = 0; i < 6; i++) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: fixed;
+                width: 5px;
+                height: 5px;
+                background: #ffc107;
+                border-radius: 50%;
+                left: ${rect.left + rect.width/2}px;
+                top: ${rect.top + rect.height/2}px;
+                animation: particleFly 0.8s ease-out forwards;
+                z-index: 1000;
+                pointer-events: none;
+                box-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+            `;
+            
+            const angle = (i / 6) * Math.PI * 2;
+            const velocity = 30;
+            particle.style.transform = `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px)`;
+            
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 800);
+        }
+    }
+
+    createCategoryParticles(button, category) {
+        const icons = {
+            'all': '⭐',
+            'title': '👑',
+            'booster': '🚀',
+            'theme': '🎨',
+            'gradient': '🌈',
+            'custom_role': '🏷️'
+        };
+
+        const icon = icons[category] || '✨';
+        const rect = button.getBoundingClientRect();
+
+        const notification = document.createElement('div');
+        notification.textContent = icon;
+        notification.style.cssText = `
+            position: fixed;
+            left: ${rect.left + rect.width/2}px;
+            top: ${rect.top - 20}px;
+            font-size: 20px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: particleFly 1s ease-out forwards;
+            transform: translateX(-50%);
+        `;
+        
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 1000);
+    }
+
+    createIconClickEffect(icon, rarity) {
+        icon.style.animation = 'none';
+        setTimeout(() => {
+            icon.style.animation = 'iconBounce 0.6s ease-in-out';
+        }, 10);
+
+        // Create burst effect
+        const rect = icon.getBoundingClientRect();
+        const colors = {
+            'legendary': '#ffc107',
+            'mythic': '#ff0040',
+            'epic': '#6f42c1',
+            'rare': '#007bff',
+            'uncommon': '#28a745',
+            'common': '#6c757d'
+        };
+
+        const color = colors[rarity] || colors.common;
+        
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const burst = document.createElement('div');
+                burst.style.cssText = `
+                    position: fixed;
+                    width: 3px;
+                    height: 3px;
+                    background: ${color};
+                    border-radius: 50%;
+                    left: ${rect.left + rect.width/2}px;
+                    top: ${rect.top + rect.height/2}px;
+                    animation: particleFly 0.8s ease-out forwards;
+                    z-index: 1000;
+                    pointer-events: none;
+                    box-shadow: 0 0 8px ${color};
+                `;
+                
+                const angle = (i / 8) * Math.PI * 2;
+                const velocity = 25 + Math.random() * 15;
+                burst.style.transform = `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px)`;
+                
+                document.body.appendChild(burst);
+                setTimeout(() => burst.remove(), 800);
+            }, i * 25);
+        }
+    }
+
+    createPurchaseEffect(button, rarity) {
+        // Visual feedback
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = '';
+        }, 150);
+
+        // Success particle explosion
+        const rect = button.getBoundingClientRect();
+        const particleCount = rarity === 'mythic' ? 20 : rarity === 'legendary' ? 15 : 10;
+        
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 6px;
+                    height: 6px;
+                    background: #28a745;
+                    border-radius: 50%;
+                    left: ${rect.left + rect.width/2}px;
+                    top: ${rect.top + rect.height/2}px;
+                    animation: particleFly 1.5s ease-out forwards;
+                    z-index: 1000;
+                    pointer-events: none;
+                    box-shadow: 0 0 10px rgba(40, 167, 69, 0.8);
+                `;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 20 + Math.random() * 30;
+                particle.style.transform = `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px)`;
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1500);
+            }, i * 30);
+        }
+    }
+
+    clearCardEffects(card) {
+        // Clear any ongoing effects
+        card._particles?.forEach(p => p.remove());
+        card._particles = [];
+    }
+
+    playHoverSound(rarity) {
+        // Placeholder for sound system
+        // Can be implemented with Web Audio API or HTML5 audio
+        if (window.audioContext) {
+            // Implementation for different rarity sounds
+        }
+    }
+}
+
+// Enhanced Purchase Function
+async function purchaseItem(itemId) {
+    const button = event.target.closest('.purchase-btn');
+    const rarity = button.dataset.rarity;
+    
+    // Show loading state
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Покупка...';
+    button.disabled = true;
+
+    try {
+        const response = await fetch(`/api/shop/purchase/${itemId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Success effect
+            button.innerHTML = '<i class="fas fa-check me-2"></i>Куплено!';
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-success');
+            
+            // Add purchased class to card
+            const card = button.closest('.shop-item-card');
+            setTimeout(() => {
+                card.classList.add('purchased');
+            }, 500);
+
+            // Update currency display
+            if (data.new_coins !== undefined) {
+                document.querySelector('.coins-display').innerHTML = 
+                    `<i class="fas fa-coins me-2"></i>${data.new_coins} койнов`;
+            }
+            if (data.new_reputation !== undefined) {
+                document.querySelector('.reputation-display').innerHTML = 
+                    `<i class="fas fa-star me-2"></i>${data.new_reputation} репутации`;
+            }
+
+            // Show success notification
+            showPurchaseNotification('success', `${button.dataset.itemName} успешно куплен!`);
+            
+        } else {
+            // Error state
+            button.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Ошибка';
+            button.classList.add('btn-danger');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-danger');
+                button.disabled = false;
+            }, 2000);
+
+            showPurchaseNotification('error', data.error || 'Произошла ошибка при покупке');
+        }
+    } catch (error) {
+        console.error('Purchase error:', error);
+        button.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Ошибка';
+        button.classList.add('btn-danger');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-danger');
+            button.disabled = false;
+        }, 2000);
+
+        showPurchaseNotification('error', 'Ошибка соединения с сервером');
+    }
+}
+
+function showPurchaseNotification(type, message) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+        min-width: 300px;
+        animation: slideInRight 0.5s ease-out;
+    `;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+        ${message}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.5s ease-in forwards';
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
+}
+
+// Initialize effects when DOM loads
+document.addEventListener('DOMContentLoaded', () => {
+    new ShopEffectsManager();
+});
+
+// Add slide animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    @keyframes particleFly {
+        0% { opacity: 1; transform: translateY(0) scale(1); }
+        100% { opacity: 0; transform: translateY(-80px) scale(0.3); }
+    }
+`;
+document.head.appendChild(style);
+
+async function purchaseItem(itemId) {
+    const button = document.querySelector(`[data-item-id="${itemId}"]`);
+    const itemName = button.dataset.itemName;
+    const itemRarity = button.dataset.rarity;
+    const costCoins = parseInt(button.dataset.costCoins);
+    const costReputation = parseInt(button.dataset.costReputation);
+
+    let confirmationMessage = `Подтвердите покупку:\n\n${itemName}\nЦена: `;
+    if (costCoins > 0) {
+        confirmationMessage += `${costCoins} койнов `;
+    }
+    if (costReputation > 0) {
+        confirmationMessage += `${costReputation} репутации`;
+    }
+    confirmationMessage += '\n\nПродолжить?';
+
+    // Check if the player has enough currency
+    const currentPlayerCoins = parseInt("{{ current_player.coins if current_player else 0 }}");
+    const currentPlayerReputation = parseInt("{{ current_player.reputation if current_player else 0 }}");
+
+    let hasEnoughCurrency = true;
+    if (costCoins > 0 && currentPlayerCoins < costCoins) {
+        hasEnoughCurrency = false;
+    }
+    if (costReputation > 0 && currentPlayerReputation < costReputation) {
+        hasEnoughCurrency = false;
+    }
+
+    if (!hasEnoughCurrency) {
+        alert(`Недостаточно средств для покупки ${itemName}!`);
+        return;
+    }
+
+    // Show confirmation
+    const confirmed = confirm(confirmationMessage);
+
+    if (confirmed) {
+        // Add loading state
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Покупка...';
+        
+        try {
+            const response = await fetch('/shop/purchase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    item_id: itemId
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Update UI
+                button.innerHTML = '<i class="fas fa-check me-2"></i>Куплено';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                
+                // Update currency displays if they exist
+                if (result.new_coins !== undefined) {
+                    const coinsDisplay = document.querySelector('.coins-display');
+                    if (coinsDisplay) {
+                        coinsDisplay.innerHTML = `<i class="fas fa-coins me-2"></i>${result.new_coins} койнов`;
+                    }
+                }
+                
+                if (result.new_reputation !== undefined) {
+                    const repDisplay = document.querySelector('.reputation-display');
+                    if (repDisplay) {
+                        repDisplay.innerHTML = `<i class="fas fa-star me-2"></i>${result.new_reputation} репутации`;
+                    }
+                }
+
+                // Show success message
+                alert(result.message || 'Покупка совершена успешно!');
+                
+                // Refresh page after short delay to show updated data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                // Show error
+                alert(result.error || 'Ошибка при покупке');
+                // Restore button
+                button.disabled = false;
+                button.innerHTML = `<i class="fas fa-shopping-cart me-2"></i>Купить`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Произошла ошибка при покупке');
+            // Restore button
+            button.disabled = false;
+            button.innerHTML = `<i class="fas fa-shopping-cart me-2"></i>Купить`;
+        }
+    }
+}
+</script>
+{% endblock %}

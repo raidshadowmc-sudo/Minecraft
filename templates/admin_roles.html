@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Управление ролями - Elite Squad{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 text-gradient">
+                    <i class="fas fa-user-tag text-warning me-2"></i>Управление ролями
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createRoleModal">
+                        <i class="fas fa-plus me-2"></i>Создать роль
+                    </button>
+                    <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Назад
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary">
+                <div class="card-body text-center">
+                    <h3 class="card-title">{{ roles|length }}</h3>
+                    <p class="card-text">Всего ролей</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success">
+                <div class="card-body text-center">
+                    <h3 class="card-title">{{ roles|selectattr('is_active')|list|length }}</h3>
+                    <p class="card-text">Активных ролей</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info">
+                <div class="card-body text-center">
+                    <h3 class="card-title">{{ players|length }}</h3>
+                    <p class="card-text">Всего игроков</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning">
+                <div class="card-body text-center text-dark">
+                    <h3 class="card-title">
+                        {% set assigned_count = role_assignments.values()|map('length')|sum %}
+                        {{ assigned_count }}
+                    </h3>
+                    <p class="card-text">Назначено ролей</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Existing Roles -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="mb-0">
+                <i class="fas fa-list text-primary me-2"></i>Существующие роли
+            </h4>
+        </div>
+        <div class="card-body">
+            {% if roles %}
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Роль</th>
+                            <th>Цвет</th>
+                            <th>Эмодзи</th>
+                            <th>Градиент</th>
+                            <th>Игроков с ролью</th>
+                            <th>Статус</th>
+                            <th>Создана</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for role in roles %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if role.display_emoji %}
+                                        {{ role.display_emoji|safe }}
+                                    {% endif %}
+                                    <span class="fw-bold ms-2" style="color: {{ role.color }};">
+                                        {% if role.has_gradient and role.gradient_end_color %}
+                                            <span style="background: linear-gradient(45deg, {{ role.color }}, {{ role.gradient_end_color }}); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                                {{ role.name }}
+                                            </span>
+                                        {% else %}
+                                            {{ role.name }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="color-preview me-2" style="background-color: {{ role.color }}; width: 20px; height: 20px; border-radius: 3px;"></div>
+                                    <small class="text-muted">{{ role.color }}</small>
+                                </div>
+                            </td>
+                            <td>
+                                {% if role.emoji %}
+                                    <span class="fs-5">{{ role.emoji }}</span>
+                                {% elif role.emoji_class %}
+                                    <i class="{{ role.emoji_class }} text-warning"></i>
+                                {% elif role.emoji_url %}
+                                    <img src="{{ role.emoji_url }}" alt="emoji" style="width: 20px; height: 20px;">
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if role.has_gradient and role.gradient_end_color %}
+                                    <div class="gradient-preview" style="background: linear-gradient(45deg, {{ role.color }}, {{ role.gradient_end_color }}); width: 40px; height: 20px; border-radius: 3px;"></div>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ role_assignments.get(role.id, [])|length }}</span>
+                            </td>
+                            <td>
+                                {% if role.is_active %}
+                                    <span class="badge bg-success">Активна</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Неактивна</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted small">
+                                {{ role.created_at.strftime('%d.%m.%Y %H:%M') if role.created_at else '-' }}
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#assignRoleModal" 
+                                            onclick="setAssignRoleData({{ role.id }}, '{{ role.name }}')">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="confirmDeleteRole({{ role.id }}, '{{ role.name }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-user-tag fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Роли не найдены</h5>
+                <p class="text-muted">Создайте первую роль для начала работы</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Role Assignments by Player -->
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">
+                <i class="fas fa-users text-success me-2"></i>Роли игроков
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <thead>
+                        <tr>
+                            <th>Игрок</th>
+                            <th>Назначенные роли</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in players %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ player.minecraft_skin_url }}" alt="skin" class="rounded me-2" style="width: 32px; height: 32px;">
+                                    <div>
+                                        <div class="fw-bold">{{ player.nickname }}</div>
+                                        <div class="text-muted small">Уровень {{ player.level }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% set player_roles = [] %}
+                                {% for role in roles %}
+                                    {% if player in role_assignments.get(role.id, []) %}
+                                        {% set _ = player_roles.append(role) %}
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if player_roles %}
+                                    {% for role in player_roles %}
+                                        <span class="badge me-1 mb-1" style="background-color: {{ role.color }}; color: white;">
+                                            {% if role.display_emoji %}{{ role.display_emoji|safe }}{% endif %}
+                                            {{ role.name }}
+                                        </span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted">Нет ролей</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#assignRoleModal" 
+                                        onclick="setAssignPlayerData({{ player.id }}, '{{ player.nickname }}')">
+                                    <i class="fas fa-plus me-1"></i>Назначить роль
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Role Modal -->
+<div class="modal fade" id="createRoleModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <form method="POST" action="{{ url_for('create_role') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus text-primary me-2"></i>Создать новую роль
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Название роли</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Цвет</label>
+                                <input type="color" class="form-control form-control-color" name="color" value="#ffc107">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Эмодзи</label>
+                                <input type="text" class="form-control" name="emoji" placeholder="🎭" maxlength="2">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Font Awesome класс</label>
+                                <input type="text" class="form-control" name="emoji_class" placeholder="fas fa-crown">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">URL эмодзи</label>
+                                <input type="url" class="form-control" name="emoji_url" placeholder="https://...">
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="has_gradient" id="hasGradient">
+                                    <label class="form-check-label" for="hasGradient">Градиент</label>
+                                </div>
+                            </div>
+                            <div class="mb-3" id="gradientSection" style="display: none;">
+                                <label class="form-label">Конечный цвет градиента</label>
+                                <input type="color" class="form-control form-control-color" name="gradient_end_color" value="#ffaa00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать роль</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Assign Role Modal -->
+<div class="modal fade" id="assignRoleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <form method="POST" action="{{ url_for('assign_role') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-plus text-success me-2"></i>Назначить роль
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Игрок</label>
+                        <select class="form-select" name="player_id" id="assignPlayerSelect" required>
+                            <option value="">Выберите игрока</option>
+                            {% for player in players %}
+                            <option value="{{ player.id }}">{{ player.nickname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Роль</label>
+                        <select class="form-select" name="role_id" id="assignRoleSelect" required>
+                            <option value="">Выберите роль</option>
+                            {% for role in roles if role.is_active %}
+                            <option value="{{ role.id }}" style="color: {{ role.color }};">
+                                {% if role.emoji %}{{ role.emoji }}{% endif %} {{ role.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-success">Назначить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle gradient section
+document.getElementById('hasGradient').addEventListener('change', function() {
+    const gradientSection = document.getElementById('gradientSection');
+    gradientSection.style.display = this.checked ? 'block' : 'none';
+});
+
+// Set role data for assignment
+function setAssignRoleData(roleId, roleName) {
+    document.getElementById('assignRoleSelect').value = roleId;
+}
+
+// Set player data for assignment
+function setAssignPlayerData(playerId, playerName) {
+    document.getElementById('assignPlayerSelect').value = playerId;
+}
+
+// Confirm role deletion
+function confirmDeleteRole(roleId, roleName) {
+    if (confirm(`Вы уверены, что хотите удалить роль "${roleName}"?`)) {
+        // Here you would implement the delete functionality
+        // For now, just show a message
+        alert('Функция удаления ролей будет добавлена в следующем обновлении.');
+    }
+}
+</script>
+
+{% endblock %}
